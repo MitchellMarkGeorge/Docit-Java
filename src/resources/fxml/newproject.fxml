@@ -29,9 +29,9 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Label text="Project Alias (Optional):" />
+            <Label text="Project Name:" />
             <Label text="Choose Word Document:" GridPane.rowIndex="1" />
-            <TextField fx:id="aliasTextField" promptText="Project Alias" GridPane.columnIndex="1" />
+            <TextField fx:id="projectNameTextField" promptText="Required" GridPane.columnIndex="1" />
             <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#openFileChooser" text="Select File" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <Label text="Selected Document:" GridPane.rowIndex="2" />
             <Label fx:id="selectedPathLabel" text=" None Selected" GridPane.columnIndex="1" GridPane.rowIndex="2" />

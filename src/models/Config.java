@@ -14,6 +14,10 @@ public class Config {
     
     private Properties properties;
 
+    public Config() {
+        this.properties = new Properties();
+    }
+
     public Config(Properties properties) {
         this.properties = properties;
     }

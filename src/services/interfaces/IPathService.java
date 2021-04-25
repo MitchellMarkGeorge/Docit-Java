@@ -15,4 +15,6 @@ public interface IPathService {
     public String getHomeDir();
     
     public String getDocitPath();
+
+    public String basename(String filePath);
 }

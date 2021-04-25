@@ -1,6 +1,7 @@
 package services;
 
 
+import java.io.File;
 // import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -11,6 +12,17 @@ public class PathService implements IPathService { // use abstract class
     // public String DOCIT_PATH = Paths.get(HOME_DIR, ".docit").toString();
     private String projectName; // should it be a local variable
     
+    @Override
+    public String basename(String filePath) {
+        int lastDotIndex = filePath.lastIndexOf('.');
+
+        if (lastDotIndex == -1) { // no dot
+            return filePath;
+        } else {
+            return filePath.substring(0, lastDotIndex);
+        }
+   
+    }
 
     @Override
     public String getHomeDir() {

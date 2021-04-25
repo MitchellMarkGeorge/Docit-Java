@@ -1,5 +1,6 @@
 package services.interfaces;
 
+import javafx.collections.ObservableList;
 import javafx.stage.Stage;
 
 public interface IStateService {
@@ -18,4 +19,10 @@ public interface IStateService {
     public Stage getNewProjectStage();
 
     public void setNewProjectStage(Stage stage);
+
+    public void addProject(String projectName);
+
+    public void setProjectList(ObservableList<String> projectList);
+
+    public ObservableList<String> getProjectList();
 }

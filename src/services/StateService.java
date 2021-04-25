@@ -1,6 +1,9 @@
 package services;
 
+import java.util.List;
+
 import javafx.stage.Stage;
+import javafx.collections.ObservableList;
 import services.interfaces.IStateService;
 
 public class StateService implements IStateService {
@@ -10,6 +13,7 @@ public class StateService implements IStateService {
     private String projectName;
     private Stage mainStage;
     private Stage newProjectStage;
+    private ObservableList<String> projectList;
     public PathService pathService = new PathService(); // dont need this
     // does this need to be in the global state context?
 
@@ -45,6 +49,21 @@ public class StateService implements IStateService {
         this.pathService.updateProjectName(projectName);
          // it would be
 
+    }
+
+    @Override
+    public void addProject(String projectName) {
+        this.projectList.add(projectName); // observable list
+    }
+
+    @Override
+    public void setProjectList(ObservableList<String> projectList) {
+        this.projectList = projectList;
+    }
+
+    @Override
+    public ObservableList<String> getProjectList() {
+        return projectList;
     }
 
     

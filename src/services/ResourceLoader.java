@@ -26,13 +26,13 @@ import di.Container;
 
 public class ResourceLoader implements IResourceLoader { // think of better name
     
-    private IStateService stateService;
+    // private IStateService stateService;
 
 
-    public ResourceLoader() {
-        this.stateService = (IStateService) Container.resolveDependency(IStateService.class);
-        System.out.println(stateService);
-    }
+    // public ResourceLoader() {
+    //     this.stateService = (IStateService) Container.resolveDependency(IStateService.class);
+    //     System.out.println(stateService);
+    // }
 
     public static void main(String[] args) {
 
@@ -81,12 +81,13 @@ public class ResourceLoader implements IResourceLoader { // think of better name
     }
 
     @Override
-    public void saveConfig(Config config) {
+    public void saveConfig(Config config, String configPath) {
         Properties properties = config.getProperties();
 
-        try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
-            
+        try (FileOutputStream fileOutputStream = new FileOutputStream(configPath)) {
+            properties.store(fileOutputStream, null); // no comments
         } catch (Exception e) {
+            e.printStackTrace();
             //TODO: handle exception
         }
     }

@@ -11,30 +11,38 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import models.Controller;
 import services.PathService;
+import services.interfaces.ICommandService;
 import services.interfaces.IPathService;
 import services.interfaces.IStateService;
 
 public class NewProjectController implements Controller {
 
-    @FXML TextField aliasTextField;
+    @FXML
+    TextField projectNameTextField;
 
-    @FXML Button selectFileButton;
+    @FXML
+    Button selectFileButton;
 
-    @FXML Button createProjectButton;
+    @FXML
+    Button createProjectButton;
 
-    @FXML Button closeButton;
+    @FXML
+    Button closeButton;
 
-    @FXML Label selectedPathLabel;
+    @FXML
+    Label selectedPathLabel;
 
     private String documentPath;
 
     IStateService stateService = (IStateService) Container.resolveDependency(IStateService.class); // cast it to T
     IPathService pathService = (IPathService) Container.resolveDependency(IPathService.class);
-    
+    ICommandService commandService = (ICommandService) Container.resolveDependency(ICommandService.class);
+
     @Override
     public void initialize() {
         // TODO Auto-generated method stub
-        
+        System.out.println("Loaded");
+
     }
 
     @FXML
@@ -42,6 +50,7 @@ public class NewProjectController implements Controller {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Choose Word Document");
         fileChooser.setInitialDirectory(new File(pathService.getHomeDir()));
+        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Word Documents", "*.doc", "*.docx"));
         File result = fileChooser.showOpenDialog(stateService.getNewProjectStage());
 
         if (result != null) {
@@ -54,14 +63,28 @@ public class NewProjectController implements Controller {
 
     @FXML
     public void createProject() {
-        
+        String projectName = projectNameTextField.getText(); // is required
+        if (projectName != null && !projectName.isBlank()) {
+            commandService.initProject(this.documentPath, projectName);
+
+            resetDialog();
+
+            stateService.getNewProjectStage().close();
+           
+        }
     }
 
     @FXML
     public void closeStage() {
-       Stage newProjectDialog =  stateService.getNewProjectStage();
-       newProjectDialog.close();
+        resetDialog();
+        Stage newProjectDialog = stateService.getNewProjectStage();
+        newProjectDialog.close();
+    }
+
+    private void resetDialog() {
+        this.documentPath = null;
+        projectNameTextField.setText(null);
+        selectedPathLabel.setText("None Selected");
     }
 
 }
-
