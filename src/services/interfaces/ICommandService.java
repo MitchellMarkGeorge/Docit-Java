@@ -13,5 +13,7 @@ public interface ICommandService {
 
     ObservableList<String> getProjects();
 
+    void newVersion(String comments);
+
     // void peek(Version version); // pass verion?
 }

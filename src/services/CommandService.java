@@ -2,29 +2,39 @@ package services;
 
 import java.io.File;
 import java.io.IOException;
+import models.Version;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import di.Container;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import models.Config;
+import models.Project;
 import services.interfaces.ICommandService;
+import services.interfaces.IFileService;
+// import services.interfaces.IHashService;
 import services.interfaces.IPathService;
 import services.interfaces.IResourceLoader;
 import services.interfaces.IStateService;
+
+import static com.google.common.io.Files.asByteSource;
+
+import com.google.common.hash.Hashing;
 
 public class CommandService implements ICommandService {
 
     IStateService stateService = (StateService) Container.resolveDependency(IStateService.class);
     IPathService pathService = (IPathService) Container.resolveDependency(IPathService.class);
     IResourceLoader resourceLoader = (IResourceLoader) Container.resolveDependency(IResourceLoader.class);
+    IFileService fileServce = (IFileService) Container.resolveDependency(IFileService.class);
 
     @Override
     public ObservableList<String> getProjects() {
-        
 
         try {
             ObservableList<String> projects = FXCollections.observableArrayList();
@@ -34,9 +44,9 @@ public class CommandService implements ICommandService {
             Files.list(docitPath).map(path -> path.toFile()).filter(file -> file.isDirectory())
                     .forEachOrdered(file -> projects.add(file.getName()));
 
-            return projects;
+            return projects; // set to state
         } catch (IOException e) {
-            
+
             throw new Error("Error in reading the file");
         } // should only be
 
@@ -56,8 +66,8 @@ public class CommandService implements ICommandService {
         String newConfigPath = Paths.get(newProjectPath.toString(), "config").toString();
         System.out.println(newConfigPath);
         newConfig.set("DOCUMENT_PATH", documentPath);
-        newConfig.set("CURRENT_VERSION", "0");
-        newConfig.set("LATEST_VERSION", "0");
+        newConfig.set("CURRENT_VERSION", "0"); // this chages based on rollbacks
+        newConfig.set("LATEST_VERSION", "0"); // this follows linear history (dosent change with rollbacks)
         makeParentFolders(newConfigPath);
         resourceLoader.saveConfig(newConfig, newConfigPath);
 
@@ -76,6 +86,70 @@ public class CommandService implements ICommandService {
         }
     }
 
+    private Version getCurrentVersion(ObservableList<Version> versions,  String versionNumber) {
+        for (Version version: versions) {
+            if (version.getVersionNumber().equals(versionNumber)) {
+                return version;
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public void newVersion(String comments) {
+        // TODO Auto-generated method stub
+
+        try {
+            Project currentProject = stateService.getCurrentProject();
+            Config projectConfig = currentProject.getConfig();
+            ObservableList<Version> projectVersions = currentProject.getVersions();
+
+            int previousVersionNumber = Integer.parseInt(projectConfig.get("LATEST_VERSION"));
+            int newVersionNumber = previousVersionNumber + 1;
+
+            String documentPath = projectConfig.get("DOCUMENT_PATH");
+            String currentVersionNumber = projectConfig.get("CURRENT_VERSION");
+            String fileHash = asByteSource(new File(documentPath)).hash(Hashing.sha256()).toString();
+
+
+            // System.out.println(getCurrentVersion(projectVersions, currentVersionNumber));
+            // get current version
+            Version currentVersion = getCurrentVersion(projectVersions, currentVersionNumber);
+
+            // // Dosen't let the user create a new version of the file has the same content (what the hashes are made from)
+            if (currentVersion.getFileHash().equals(fileHash)) {
+                return; // show error dialog
+            }
+
+            String targetPath = Paths.get(pathService.getVersionFilesPath(), fileHash).toString();
+            makeParentFolders(targetPath);
+
+            fileServce.compressFile(documentPath, targetPath);
+
+            Date date = new Date();
+            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy"); 
+            String stringDate = formatter.format(date);
+
+            String newVersionNumberString = Integer.toString(newVersionNumber);
+
+            Version newVersion = new Version(newVersionNumberString, fileHash, stringDate, comments);
+
+
+            projectConfig.set("LATEST_VERSION", newVersionNumberString);
+            projectConfig.set("CURRENT_VERSION", newVersionNumberString);
+
+            resourceLoader.saveConfig(projectConfig, pathService.getConfigPath());
+            resourceLoader.saveVersion(newVersion, pathService.getVersionsPath());
+
+            projectVersions.add(newVersion);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            // TODO: handle exception
+        }
+
+    }
     // private void makeFile(String filename) {
     // File f = new File(filename);
     // if (f.getParentFile() != null) {

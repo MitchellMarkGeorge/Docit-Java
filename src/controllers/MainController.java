@@ -1,11 +1,18 @@
 package controllers;
 
 import models.Controller;
+import models.Project;
 import models.Version;
 import services.interfaces.ICommandService;
+import services.interfaces.IPathService;
+import services.interfaces.IResourceLoader;
 import services.interfaces.IStateService;
+
+import java.util.Optional;
+
 import di.Container;
 import dialogs.NewProjectDialog;
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -24,6 +31,7 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 // import javafx.scene.control.SplitPane.Divider;
 import javafx.scene.control.cell.PropertyValueFactory;
 
@@ -47,6 +55,9 @@ public class MainController implements Controller {
     private TableColumn<Version, String> commentsColumn;
     IStateService stateService = (IStateService) Container.resolveDependency(IStateService.class);
     ICommandService commandService = (ICommandService) Container.resolveDependency(ICommandService.class);
+    IResourceLoader resouceService = (IResourceLoader) Container.resolveDependency(IResourceLoader.class);
+    IPathService pathService = (IPathService) Container.resolveDependency(IPathService.class);
+    
     // Initializable
 
     @Override
@@ -73,28 +84,40 @@ public class MainController implements Controller {
 
         // figure this out!!!!
         ObservableList<String> projects = commandService.getProjects();
+        stateService.setProjectList(projects);
+        listView.setItems(projects);
 
-        if (projects.size() > 0) {
-            listView.setItems(projects);
-
-            stateService.setProjectList(projects); // do they all have the same reference? They do! This means if i add a project to the state service, it will reflect in the local project valie
-
-            projects.addListener((ListChangeListener<String>) change -> {
-
-                while (change.next()) {
-                    if (change.wasAdded()) {
-                        System.out.println(change.getAddedSubList().get(0));
-                        // System.out.println(stateService.getProjectList());
-                                
-                    } 
-                }
-            });
-
-        } else {
-            listView.setPlaceholder(new Label("No Projects"));
+        if (projects.isEmpty()) {
+            listView.setPlaceholder(new Label("No Projects")); //  use button
         }
+        // projects.addListener((ListChangeListener<String>) change -> {
+
+        //     while (change.next()) {
+        //         if (change.wasAdded()) {
+                    
+        //             String newItem = change.getAddedSubList().get(0);
+        //             System.out.println(newItem);
+        //             listView.getItems().add(newItem);
+                    
+        //             // listView.rem
+        //             // System.out.println(stateService.getProjectList());
+                            
+        //         } 
+        //     }
+        // });
+         // even if it is empty
+        // if (projects.size() > 0) {
+        //     listView.setItems(projects);
+
+        //      // do they all have the same reference? They do! This means if i add a project to the state service, it will reflect in the local project valie
+
+        // } else {
+        //     listView.setPlaceholder(new Label("No Projects"));
+
+        // }
 
         tableView.getSelectionModel().selectedItemProperty().addListener((ov, oldO, newO) -> {
+            System.out.println("Table selected"); // this event is called when a project is seleted and a row was previously selected
             System.out.println(newO);
         });
 
@@ -105,8 +128,24 @@ public class MainController implements Controller {
         // });
 
         listView.getSelectionModel().selectedItemProperty().addListener((ov, oldS, newS) -> {
-            System.out.println("Old " + oldS + " New " + newS);
-            projectLabel.setText(newS);
+            // System.out.println("Old " + oldS + " New " + newS);
+            System.out.println("List selected");
+
+            // stateService.setProjectName(newS);
+            
+
+            
+           Project selectedProject = resouceService.loadProject(newS);
+
+           stateService.setProjectName(newS);
+           stateService.setCurrentProject(selectedProject);
+
+           projectLabel.setText(newS);
+            ObservableList<Version> projectVersions = selectedProject.getVersions();     
+           tableView.setItems(projectVersions);
+
+           
+            
         });
 
         // listView.getSelectionModel().getSelectedIndex()
@@ -120,7 +159,20 @@ public class MainController implements Controller {
 
     @FXML
     public void createNewVersion(ActionEvent event) {
-        System.out.println("Hello");
+        // System.out.println("Hello");
+        TextInputDialog dialog = new TextInputDialog();
+
+        dialog.setTitle("Create Version");
+        dialog.setContentText("Enter comments:");
+        
+        Optional<String> result = dialog.showAndWait();
+
+        if (result.isPresent() && result.get() != null) {
+            String comments = result.get();
+
+            commandService.newVersion(comments);
+        }
+        System.out.println(result.isPresent());
     }
 
     public void peekVersion(ActionEvent event) {

@@ -10,11 +10,13 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import services.CommandService;
 import services.FileService;
+import services.HashService;
 import services.PathService;
 import services.ResourceLoader;
 import services.StateService;
 import services.interfaces.ICommandService;
 import services.interfaces.IFileService;
+import services.interfaces.IHashService;
 import services.interfaces.IPathService;
 import services.interfaces.IResourceLoader;
 import services.interfaces.IStateService;
@@ -40,6 +42,7 @@ public class App extends Application {
         Container.bindDependency(IPathService.class, new PathService());
         Container.bindDependency(IFileService.class, new FileService()); 
         Container.bindDependency(IResourceLoader.class, new ResourceLoader());
+        Container.bindDependency(IHashService.class, new HashService());
         Container.bindDependency(ICommandService.class, new CommandService());
         
         stateService.setMainStage(mainStage);

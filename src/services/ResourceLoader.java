@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 /**
@@ -17,67 +18,115 @@ import java.util.Properties;
  * @author Mitchell Mark-George
  */
 
- import models.Config;
- import models.Version;
- import services.FileService;
+import models.Config;
+import models.Project;
+import models.Version;
+import services.FileService;
+import services.interfaces.IFileService;
+import services.interfaces.IPathService;
 import services.interfaces.IResourceLoader;
 import services.interfaces.IStateService;
 import di.Container;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 public class ResourceLoader implements IResourceLoader { // think of better name
-    
+
     // private IStateService stateService;
 
-
     // public ResourceLoader() {
-    //     this.stateService = (IStateService) Container.resolveDependency(IStateService.class);
-    //     System.out.println(stateService);
+    // this.stateService = (IStateService)
+    // Container.resolveDependency(IStateService.class);
+    // System.out.println(stateService);
     // }
+
+    IStateService stateService = (IStateService) Container.resolveDependency(IStateService.class);
+    IFileService fileService = (IFileService) Container.resolveDependency(IFileService.class);
+    IPathService pathService = (IPathService) Container.resolveDependency(IPathService.class);
 
     public static void main(String[] args) {
 
         // Container.bindDependency(IStateService.class, StateService.class);
         new ResourceLoader();
     }
+
     /**
-     * This method parses a string appropriately and stores the parsed information in a Config object
+     * This method parses a string appropriately and stores the parsed information
+     * in a Config object
+     * 
      * @param string string to be parsed
      * @return a Config object with the parsed information
      */
     @Override
-    public Config loadConfig() {
-        
-      
+    public Config loadConfig(String configPath) {
+        // the config is made with the project
         Properties properties = new Properties();
-        String pathString = path.toString();// should i use to File?
-        
-        try (FileInputStream fileInputStream = new FileInputStream(pathString)) {
+
+        try (FileInputStream fileInputStream = new FileInputStream(configPath)) {
             properties.load(fileInputStream); // should i use FileReader
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        } 
+        }
         Config config = new Config(properties);
-        
-        
-        
-        // FileService.readFileLines(Path.of("je;"), (line) -> {
-        //     line.split("=");
-        // });
 
+        // FileService.readFileLines(Path.of("je;"), (line) -> {
+        // line.split("=");
+        // });
 
         return config;
 
     }
 
     /**
-     * This method parses a string appropriately and stores the parsed information in a Version object
-     * @param string string to be parsed
-     * @return a Config object with the parsed information
+     * Get Project object for current project
      */
     @Override
-    public Version versionFromString(String string) {
-        return new Version();
+    public Project loadProject(String projectName) {
+        // TODO Auto-generated method stub
+        pathService.updateProjectName(projectName);
+        String configPath = pathService.getConfigPath();
+        String versionsPath = pathService.getVersionsPath();
+
+        Config config = loadConfig(configPath);
+        ObservableList<Version> versions = loadVersions(versionsPath);
+
+        return new Project(config, versions);
+    }
+
+    @Override
+    public ObservableList<Version> loadVersions(String versionsPath) {
+        // TODO Auto-generated method stub
+      ObservableList<Version> versions = FXCollections.observableArrayList();
+
+      if (Files.exists(Paths.get(versionsPath))) {
+        fileService.readFileLines(versionsPath, (line) -> {
+            Version parsedVersion = versionFromString(line);
+            versions.add(parsedVersion);
+        });
+      }
+    
+      return versions;
+    }
+
+    @Override
+    public void saveVersion(Version version, String versionPath) {
+        // TODO Auto-generated method stub
+        String versionString = version.toString();
+        fileService.appendToFile(versionPath, versionString);
+
+    }
+
+    private Version versionFromString(String stringVersion) {
+        // versionNumber + " " + fileHash + " " + date + " " + comments;
+        String[] versionsObject = stringVersion.split(" ");
+
+        String versionNumber = versionsObject[0].trim();
+        String date = versionsObject[1].trim();
+        String fileHash = versionsObject[2].trim();
+        String comments = versionsObject[3].trim();
+
+        return new Version(versionNumber, fileHash, date, comments);
     }
 
     @Override
@@ -88,14 +137,10 @@ public class ResourceLoader implements IResourceLoader { // think of better name
             properties.store(fileOutputStream, null); // no comments
         } catch (Exception e) {
             e.printStackTrace();
-            //TODO: handle exception
+            // TODO: handle exception
         }
     }
 
-    @Override
-    public void saveVersion(Version version) {
-        // TODO Auto-generated method stub
-        
-    }
     
+
 }

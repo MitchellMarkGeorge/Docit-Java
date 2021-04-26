@@ -39,6 +39,11 @@ public class PathService implements IPathService { // use abstract class
     }
 
     @Override
+    public String getVersionFilesPath() {
+        return Paths.get(getProjectPath(), "version_files").toString();
+    }
+
+    @Override
     public String getProjectPath() {
         return Paths.get(getDocitPath(), this.projectName).toString();
     }

@@ -17,7 +17,7 @@ public class NewProjectDialog extends Stage { // use as sependency
         // should i do this now?
         IStateService stateService = (IStateService) Container.resolveDependency(IStateService.class);
         initOwner(stateService.getMainStage());
-
+        
         
         this.setTitle("Create Title");
         this.setHeight(300);

@@ -2,6 +2,7 @@ package services.interfaces;
 
 import javafx.collections.ObservableList;
 import javafx.stage.Stage;
+import models.Project;
 
 public interface IStateService {
     // private String projectName;
@@ -23,6 +24,10 @@ public interface IStateService {
     public void addProject(String projectName);
 
     public void setProjectList(ObservableList<String> projectList);
+
+    public void setCurrentProject(Project project);
+
+    public Project getCurrentProject();
 
     public ObservableList<String> getProjectList();
 }
