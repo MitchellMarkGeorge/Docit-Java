@@ -4,19 +4,22 @@ import java.util.List;
 
 import javafx.stage.Stage;
 import models.Project;
+import models.Version;
 import javafx.collections.ObservableList;
 import services.interfaces.IStateService;
 
 public class StateService implements IStateService {
 
-
+    // just use a map?
 
     private String projectName;
     private Stage mainStage;
     private Stage newProjectStage;
+    private Stage viewVersionStage;
     private ObservableList<String> projectList;
     private Project currentProject;
-    public PathService pathService = new PathService(); // dont need this
+    private Version currentVersion;
+    // public PathService pathService = new PathService(); // dont need this
     // does this need to be in the global state context?
 
     @Override
@@ -48,7 +51,7 @@ public class StateService implements IStateService {
     @Override
     public void setProjectName(String projectName) {
         this.projectName = projectName;
-        this.pathService.updateProjectName(projectName);
+        // this.pathService.updateProjectName(projectName);
          // it would be
 
     }
@@ -76,6 +79,31 @@ public class StateService implements IStateService {
     @Override
     public void setCurrentProject(Project project) {
         this.currentProject = project;
+    }
+
+    @Override
+    public Stage getViewVersionStage() {
+        
+        return this.viewVersionStage;
+    }
+
+    @Override
+    public void setViewVersionStage(Stage stage) {
+        this.viewVersionStage = stage;
+    }
+
+    @Override
+    public Version getCurrentVersion() {
+        // TODO Auto-generated method stub
+        return this.currentVersion;
+    }
+
+    @Override
+    public void setCurrentVersion(Version version) {
+        // TODO Auto-generated method stub
+
+        this.currentVersion = version;
+        
     }
 
     

@@ -14,8 +14,7 @@ import java.util.stream.Stream;
 
 // import java.io.FileInputStream;
 import java.util.zip.DeflaterOutputStream;
-
-
+import java.util.zip.InflaterInputStream;
 
 import services.interfaces.IFileService;
 
@@ -77,17 +76,21 @@ public class FileService implements IFileService {
             stream.forEachOrdered(callback);
         } catch (Exception e) {
             // TODO: handle exception
+            e.printStackTrace();
         }
     }
 
     @Override
     public void appendToFile(String path, String line) {
         // try-resource-idiom
+
+       String formattedLine =  line + System.lineSeparator();
         try {
-            Files.write(Paths.get(path), line.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE,
+            Files.write(Paths.get(path), formattedLine.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE,
                     StandardOpenOption.APPEND);
         } catch (Exception e) {
             // TODO: handle exception
+            e.printStackTrace();
         }
 
     }
@@ -148,6 +151,33 @@ public class FileService implements IFileService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void decompressFile(String sourcePath, String targetPath) {
+        
+
+        try {
+            FileInputStream fileInputStream = new FileInputStream(sourcePath);
+
+            FileOutputStream fileOutputStream = new FileOutputStream(targetPath);
+            
+            InflaterInputStream inflaterOutputStream = new InflaterInputStream(fileInputStream);
+
+            int data;
+
+            while ((data = inflaterOutputStream.read()) != -1) {
+                fileOutputStream.write(data);
+            }
+
+            // close the files
+            
+            inflaterOutputStream.close();
+            fileOutputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
     }
 
 }

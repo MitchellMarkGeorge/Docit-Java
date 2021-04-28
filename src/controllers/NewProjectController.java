@@ -45,6 +45,18 @@ public class NewProjectController implements Controller {
 
     }
 
+    @Override
+    public void onClosing() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onLoad() {
+        // TODO Auto-generated method stub
+        
+    }
+
     @FXML
     public void openFileChooser() {
         FileChooser fileChooser = new FileChooser();

@@ -44,12 +44,6 @@ public class ResourceLoader implements IResourceLoader { // think of better name
     IFileService fileService = (IFileService) Container.resolveDependency(IFileService.class);
     IPathService pathService = (IPathService) Container.resolveDependency(IPathService.class);
 
-    public static void main(String[] args) {
-
-        // Container.bindDependency(IStateService.class, StateService.class);
-        new ResourceLoader();
-    }
-
     /**
      * This method parses a string appropriately and stores the parsed information
      * in a Config object
@@ -97,16 +91,18 @@ public class ResourceLoader implements IResourceLoader { // think of better name
     @Override
     public ObservableList<Version> loadVersions(String versionsPath) {
         // TODO Auto-generated method stub
-      ObservableList<Version> versions = FXCollections.observableArrayList();
+        ObservableList<Version> versions = FXCollections.observableArrayList();
 
-      if (Files.exists(Paths.get(versionsPath))) {
-        fileService.readFileLines(versionsPath, (line) -> {
-            Version parsedVersion = versionFromString(line);
-            versions.add(parsedVersion);
-        });
-      }
-    
-      return versions;
+        if (Files.exists(Paths.get(versionsPath))) {
+            fileService.readFileLines(versionsPath, (line) -> {
+                if (!line.isBlank()) {
+                    Version parsedVersion = versionFromString(line);
+                    versions.add(parsedVersion);
+                }
+            });
+        }
+
+        return versions;
     }
 
     @Override
@@ -122,8 +118,8 @@ public class ResourceLoader implements IResourceLoader { // think of better name
         String[] versionsObject = stringVersion.split(" ");
 
         String versionNumber = versionsObject[0].trim();
-        String date = versionsObject[1].trim();
-        String fileHash = versionsObject[2].trim();
+        String fileHash = versionsObject[1].trim();
+        String date = versionsObject[2].trim();
         String comments = versionsObject[3].trim();
 
         return new Version(versionNumber, fileHash, date, comments);
@@ -140,7 +136,5 @@ public class ResourceLoader implements IResourceLoader { // think of better name
             // TODO: handle exception
         }
     }
-
-    
 
 }

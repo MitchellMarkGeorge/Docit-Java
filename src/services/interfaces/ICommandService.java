@@ -1,6 +1,6 @@
 package services.interfaces;
 
-import java.lang.module.ModuleDescriptor.Version;
+import models.Version;
 import java.util.List;
 
 import javafx.collections.ObservableList;
@@ -15,5 +15,9 @@ public interface ICommandService {
 
     void newVersion(String comments);
 
-    // void peek(Version version); // pass verion?
+
+
+    void peekVersion(Version version); // pass verion?
+
+    void rollbackVersion(Version version); // pass verion?
 }

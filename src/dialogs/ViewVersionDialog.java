@@ -1,7 +1,6 @@
 package dialogs;
 
 import java.io.IOException;
-import java.net.URL;
 
 import controllers.ViewVersionController;
 import di.Container;
@@ -11,16 +10,16 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import services.interfaces.IStateService;
 
-public class NewProjectDialog extends Stage { // use as sependency
+public class ViewVersionDialog extends Stage {
+    
+    IStateService stateService = (IStateService) Container.resolveDependency(IStateService.class);
 
-    public NewProjectDialog() throws Exception {
+    public ViewVersionDialog() throws IOException {
         super();
-        // should i do this now?
-        IStateService stateService = (IStateService) Container.resolveDependency(IStateService.class);
+
         initOwner(stateService.getMainStage());
-        
-        
-        this.setTitle("Create Version");
+
+        this.setTitle("View Version");
         this.setHeight(300);
         this.setWidth(400);
         this.setResizable(false);
@@ -28,20 +27,21 @@ public class NewProjectDialog extends Stage { // use as sependency
         FXMLLoader loader = new FXMLLoader();
         
         // System.out.println(getClass().getResource("/resources/fxml/newproject.fxml"));
-        loader.setLocation(getClass().getResource("/resources/fxml/newproject.fxml"));
+        loader.setLocation(getClass().getResource("/resources/fxml/viewversion.fxml"));
         // // loader.setController(new MainController());
         Parent root = loader.load();
 
       
 
         this.setScene(new Scene(root));
-        // stage.setScene(scene);
-        // this.show();
 
-        
-        
-
-
+        // very hacky
+        // use this to set up lifecycle hooks!
+        this.setOnShowing(event -> {
+            ViewVersionController controller = (ViewVersionController)  loader.getController();
+            // need to tell the controller to load the current version and update its element
+            controller.onLoad();
+          });
     }
 
     

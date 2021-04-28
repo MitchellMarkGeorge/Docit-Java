@@ -10,5 +10,6 @@ public interface IFileService {
     public byte[] readFiletoBuffer(String path);
     public void writeBuffertoFile(String path, byte[] buffer); 
     public void compressFile(String sourcePath, String targetPath);
+    public void decompressFile(String sourcePath, String targetPath);
     
 }

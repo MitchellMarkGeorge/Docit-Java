@@ -16,6 +16,7 @@ import javafx.collections.ObservableList;
 import models.Config;
 import models.Project;
 import services.interfaces.ICommandService;
+import services.interfaces.IErrorService;
 import services.interfaces.IFileService;
 // import services.interfaces.IHashService;
 import services.interfaces.IPathService;
@@ -32,6 +33,10 @@ public class CommandService implements ICommandService {
     IPathService pathService = (IPathService) Container.resolveDependency(IPathService.class);
     IResourceLoader resourceLoader = (IResourceLoader) Container.resolveDependency(IResourceLoader.class);
     IFileService fileServce = (IFileService) Container.resolveDependency(IFileService.class);
+    IErrorService errorService = (IErrorService) Container.resolveDependency(IErrorService.class);
+    // public static void main(String[] args) {
+    // System.out.println(Paths.get("C://meme/me.png").getFileName().toString());
+    // }
 
     @Override
     public ObservableList<String> getProjects() {
@@ -46,7 +51,8 @@ public class CommandService implements ICommandService {
 
             return projects; // set to state
         } catch (IOException e) {
-
+            e.printStackTrace();
+            errorService.showErrorDialog("Error in geting projects");
             throw new Error("Error in reading the file");
         } // should only be
 
@@ -59,7 +65,9 @@ public class CommandService implements ICommandService {
         Path newProjectPath = Paths.get(pathService.getDocitPath(), projectName);
         System.out.println(newProjectPath);
         if (Files.exists(newProjectPath)) {
-            throw new Error("Project " + projectName + " already exists");
+            // throw new Error("Project " + projectName + " already exists");
+            errorService.showErrorDialog("Project " + projectName + " already exists");
+            return;
         }
 
         Config newConfig = new Config();
@@ -86,8 +94,8 @@ public class CommandService implements ICommandService {
         }
     }
 
-    private Version getCurrentVersion(ObservableList<Version> versions,  String versionNumber) {
-        for (Version version: versions) {
+    private Version getCurrentVersion(ObservableList<Version> versions, String versionNumber) {
+        for (Version version : versions) {
             if (version.getVersionNumber().equals(versionNumber)) {
                 return version;
             }
@@ -112,15 +120,18 @@ public class CommandService implements ICommandService {
             String currentVersionNumber = projectConfig.get("CURRENT_VERSION");
             String fileHash = asByteSource(new File(documentPath)).hash(Hashing.sha256()).toString();
 
+            System.out.println(currentVersionNumber);
 
             // System.out.println(getCurrentVersion(projectVersions, currentVersionNumber));
             // get current version
-            Version currentVersion = getCurrentVersion(projectVersions, currentVersionNumber);
+            // Version currentVersion = getCurrentVersion(projectVersions,
+            // currentVersionNumber);
 
-            // // Dosen't let the user create a new version of the file has the same content (what the hashes are made from)
-            if (currentVersion.getFileHash().equals(fileHash)) {
-                return; // show error dialog
-            }
+            // // // Dosen't let the user create a new version of the file has the same
+            // content (what the hashes are made from)
+            // if (currentVersion.getFileHash().equals(fileHash)) {
+            // return; // show error dialog
+            // }
 
             String targetPath = Paths.get(pathService.getVersionFilesPath(), fileHash).toString();
             makeParentFolders(targetPath);
@@ -128,13 +139,12 @@ public class CommandService implements ICommandService {
             fileServce.compressFile(documentPath, targetPath);
 
             Date date = new Date();
-            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy"); 
+            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             String stringDate = formatter.format(date);
 
             String newVersionNumberString = Integer.toString(newVersionNumber);
 
             Version newVersion = new Version(newVersionNumberString, fileHash, stringDate, comments);
-
 
             projectConfig.set("LATEST_VERSION", newVersionNumberString);
             projectConfig.set("CURRENT_VERSION", newVersionNumberString);
@@ -162,4 +172,43 @@ public class CommandService implements ICommandService {
     // e.printStackTrace();
     // }
     // }
+
+    @Override
+    public void rollbackVersion(Version version) {
+        Project currentProject = stateService.getCurrentProject();
+        Config projectConfig = currentProject.getConfig();
+        // ObservableList<Version> projectVersions = currentProject.getVersions();
+        String fileHash = version.getFileHash();
+
+        String versionFilePath = Paths.get(pathService.getVersionFilesPath(), fileHash).toString();
+
+        fileServce.decompressFile(versionFilePath, projectConfig.get("DOCUMENT_PATH"));
+
+        projectConfig.set("CURRENT_VERSION", version.getVersionNumber());
+
+        resourceLoader.saveConfig(projectConfig, pathService.getConfigPath());
+    }
+
+    @Override
+    public void peekVersion(Version version) {
+
+        Project currentProject = stateService.getCurrentProject();
+        Config projectConfig = currentProject.getConfig();
+        String documentPath = projectConfig.get("DOCUMENT_PATH");
+        String fileHash = version.getFileHash();
+
+        String parentDirname = Paths.get(documentPath).getParent().toString();
+
+        // rename
+        Path fileName = Paths.get(documentPath).getFileName();
+        String documentFileName = pathService.basename(fileName.toString());
+
+        String versionNumber = version.getVersionNumber();
+
+        String peekedFilePath = Paths.get(parentDirname, documentFileName + " v" + versionNumber + ".docx").toString();
+
+        String versionFilePath = Paths.get(pathService.getVersionFilesPath(), fileHash).toString();
+        fileServce.decompressFile(versionFilePath, peekedFilePath);
+
+    }
 }
