@@ -1,5 +1,23 @@
 package controllers;
 
+import java.util.Optional;
+
+import di.Container;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+// import javafx.scene.control.Label;
+// import javafx.scene.control.ListView;
+// import javafx.scene.control.TableView;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextInputDialog;
+// import javafx.scene.control.SplitPane.Divider;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Stage;
 import models.Controller;
 import models.Project;
 import models.Version;
@@ -8,32 +26,7 @@ import services.interfaces.IPathService;
 import services.interfaces.IResourceLoader;
 import services.interfaces.IStateService;
 
-import java.util.Optional;
-
-import di.Container;
-import dialogs.NewProjectDialog;
-import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-// import javafx.scene.control.Label;
-// import javafx.scene.control.ListView;
-
-import javafx.scene.layout.HBox;
-import javafx.stage.Stage;
-// import javafx.scene.control.TableView;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputDialog;
-// import javafx.scene.control.SplitPane.Divider;
-import javafx.scene.control.cell.PropertyValueFactory;
+//should show the current and latest version version SOMEHOW
 
 public class MainController implements Controller { // need to fix this
 
@@ -62,6 +55,8 @@ public class MainController implements Controller { // need to fix this
 
     @Override
     public void initialize() {
+
+        
         // new TextField().repl
         // TODO Auto-generated method stub
         // System.out.println(listView.getItems());
@@ -118,8 +113,8 @@ public class MainController implements Controller { // need to fix this
         // }
 
         tableView.getSelectionModel().selectedItemProperty().addListener((ov, oldO, newO) -> {
-             // this event is called when a project is seleted and a row was
-                                                  // previously selected, leading to it being null
+            // this event is called when a project is seleted and a row was
+            // previously selected, leading to it being null
             if (newO != null) {
                 System.out.println("Table selected");
                 System.out.println(newO);
@@ -127,7 +122,7 @@ public class MainController implements Controller { // need to fix this
                 stateService.setCurrentVersion(newO);
                 stateService.getViewVersionStage().show();
             }
-            
+
         });
 
         // PropertyValueFactory
@@ -165,13 +160,13 @@ public class MainController implements Controller { // need to fix this
     @Override
     public void onLoad() {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void onClosing() {
         // TODO Auto-generated method stub
-        
+
     }
 
     @FXML

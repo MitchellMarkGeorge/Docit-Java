@@ -38,6 +38,10 @@ public class CommandService implements ICommandService {
     // System.out.println(Paths.get("C://meme/me.png").getFileName().toString());
     // }
 
+    /**
+     * Do siagram to showcase how each command affects the timeline/ how the timeline works ingeneral
+     */
+
     @Override
     public ObservableList<String> getProjects() {
 
@@ -78,6 +82,8 @@ public class CommandService implements ICommandService {
         newConfig.set("LATEST_VERSION", "0"); // this follows linear history (dosent change with rollbacks)
         makeParentFolders(newConfigPath);
         resourceLoader.saveConfig(newConfig, newConfigPath);
+
+        
 
         stateService.addProject(projectName); // this in turn should update the
         // listview in the main conrtroller using Observable lists
