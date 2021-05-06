@@ -33,7 +33,9 @@ public class ContainerModule {
         stateService.setMainStage(mainStage);
         Stage newProjectStage = new DialogStage("Create Project", "/resources/fxml/newproject.fxml");
         Stage viewVersionStage = new DialogStage("View Version", "/resources/fxml/viewversion.fxml");
+        Stage projectDetailStage = new DialogStage("Project Details", "/resources/fxml/projectdetails.fxml");
         stateService.setNewProjectStage(newProjectStage);
         stateService.setViewVersionStage(viewVersionStage);
+        stateService.setProjectDetailsStage(projectDetailStage);
     }
 }

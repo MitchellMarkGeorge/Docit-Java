@@ -210,6 +210,10 @@ public class MainController implements Initializable { // need to fix this
     @FXML
     public void showProjectDetails() {
 
+        if (stateService.getProjectName() != null) {
+            stateService.getProjectDetailsStage().show();
+        }
+        
     }
 
 }

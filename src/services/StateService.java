@@ -16,6 +16,7 @@ public class StateService implements IStateService {
     private Stage mainStage;
     private Stage newProjectStage;
     private Stage viewVersionStage;
+    private Stage projectDetailsStage;
     private ObservableList<String> projectList;
     private Project currentProject;
     private Version currentVersion;
@@ -105,6 +106,18 @@ public class StateService implements IStateService {
         this.currentVersion = version;
         
     }
+
+    @Override
+    public Stage getProjectDetailsStage() {
+        return projectDetailsStage;
+    }
+
+    @Override
+    public void setProjectDetailsStage(Stage stage) {
+        this.projectDetailsStage = stage;
+    }
+
+
 
     
 }

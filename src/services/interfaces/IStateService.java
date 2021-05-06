@@ -26,6 +26,10 @@ public interface IStateService {
 
     public void setViewVersionStage(Stage stage);
 
+    public void setProjectDetailsStage(Stage stage);
+
+    public Stage getProjectDetailsStage();
+
     public void addProject(String projectName);
 
     public void setProjectList(ObservableList<String> projectList);
