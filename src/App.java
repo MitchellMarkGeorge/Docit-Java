@@ -9,25 +9,7 @@ import javafx.scene.Scene;
 // import javafx.scene.control.ListView;
 // import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-import services.CommandService;
-import services.FileService;
-import services.HashService;
-import services.PathService;
-import services.ResourceLoader;
-import services.StateService;
-import services.interfaces.ICommandService;
-import services.interfaces.IFileService;
-import services.interfaces.IHashService;
-import services.interfaces.IPathService;
-import services.interfaces.IResourceLoader;
-import services.interfaces.IStateService;
-import controllers.MainController;
-import controllers.NewProjectController;
-import controllers.ViewVersionController;
-import dialogs.DialogStage;
-import di.Container;
-import dialogs.NewProjectDialog;
-import dialogs.ViewVersionDialog;
+
 
 public class App extends Application {
     public static void main(String[] args) {

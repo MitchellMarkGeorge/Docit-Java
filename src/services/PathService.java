@@ -10,12 +10,15 @@ import services.interfaces.IPathService;
 public class PathService implements IPathService { // use abstract class
     // public String HOME_DIR = System.getProperty("user.home");
     // public String DOCIT_PATH = Paths.get(HOME_DIR, ".docit").toString();
-    private String projectName; // should it be a local variable
+    private String projectName; // should it be a local variable??? Might remove and just have
     
     @Override
     public String basename(String filePath) {
-        int lastDotIndex = filePath.lastIndexOf('.');
 
+        // cna have file.service.docx
+
+        // int lastDotIndex = filePath.lastIndexOf('.');
+        int lastDotIndex = filePath.indexOf('.'); // should i do this
         if (lastDotIndex == -1) { // no dot
             return filePath;
         } else {

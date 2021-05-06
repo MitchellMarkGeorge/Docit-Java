@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" fx:controller="controllers.MainController" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.MainController">
    <children>
       <MenuBar>
         <menus>
@@ -37,6 +37,11 @@
                         <Insets bottom="8.0" />
                      </VBox.margin>
                   </Label>
+                  <Button mnemonicParsing="false" onAction="#showProjectDetails" text="Project Details">
+                     <VBox.margin>
+                        <Insets bottom="8.0" />
+                     </VBox.margin>
+                  </Button>
                   <Button fx:id="newVersionButton" mnemonicParsing="false" onAction="#createNewVersion" text="New Version">
                      <VBox.margin>
                         <Insets bottom="8.0" />

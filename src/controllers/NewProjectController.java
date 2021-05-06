@@ -1,6 +1,8 @@
 package controllers;
 
 import java.io.File;
+import java.net.URL;
+import java.util.ResourceBundle;
 
 import di.Container;
 import javafx.fxml.FXML;
@@ -39,9 +41,11 @@ public class NewProjectController implements Controller {
     ICommandService commandService = (ICommandService) Container.resolveDependency(ICommandService.class);
 
     @Override
-    public void initialize() {
+    public void initialize(URL location, ResourceBundle resources) {
         // TODO Auto-generated method stub
         System.out.println("Loaded");
+
+        createProjectButton.disableProperty().bind(projectNameTextField.textProperty().isEmpty());
 
     }
 
@@ -82,6 +86,8 @@ public class NewProjectController implements Controller {
             resetDialog();
 
             stateService.getNewProjectStage().close();
+
+            
            
         }
     }

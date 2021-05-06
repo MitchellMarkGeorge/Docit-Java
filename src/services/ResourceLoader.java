@@ -81,7 +81,7 @@ public class ResourceLoader implements IResourceLoader { // think of better name
         pathService.updateProjectName(projectName);
         String configPath = pathService.getConfigPath();
         String versionsPath = pathService.getVersionsPath();
-
+        System.out.println(versionsPath);
         Config config = loadConfig(configPath);
         ObservableList<Version> versions = loadVersions(versionsPath);
 
@@ -92,13 +92,16 @@ public class ResourceLoader implements IResourceLoader { // think of better name
     public ObservableList<Version> loadVersions(String versionsPath) {
         // TODO Auto-generated method stub
         ObservableList<Version> versions = FXCollections.observableArrayList();
-
+        System.out.println(Files.exists(Paths.get(versionsPath)));
         if (Files.exists(Paths.get(versionsPath))) {
             fileService.readFileLines(versionsPath, (line) -> {
-                if (!line.isBlank()) {
+                System.out.println(line);
+                // if (!line.isBlank()) {
+                    // System.out.println(line);
                     Version parsedVersion = versionFromString(line);
+                    System.out.println(parsedVersion == null);
                     versions.add(parsedVersion);
-                }
+                // }
             });
         }
 
@@ -118,11 +121,12 @@ public class ResourceLoader implements IResourceLoader { // think of better name
         String[] versionsObject = stringVersion.split(" ");
 
         String versionNumber = versionsObject[0].trim();
-        String fileHash = versionsObject[1].trim();
+        String fileName = versionsObject[1].trim();
         String date = versionsObject[2].trim();
-        String comments = versionsObject[3].trim();
+        String comments = versionsObject[3].trim(); // There must be a comment OR THE WHOLE THING BREAKS!!!
+        
 
-        return new Version(versionNumber, fileHash, date, comments);
+        return new Version(versionNumber, fileName, date, comments);
     }
 
     @Override

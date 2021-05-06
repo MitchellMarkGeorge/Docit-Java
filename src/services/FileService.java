@@ -1,6 +1,7 @@
 package services;
 
 import java.io.IOException;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.file.Files;
@@ -10,7 +11,6 @@ import java.nio.file.StandardOpenOption;
 import java.nio.charset.StandardCharsets;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
-
 
 // import java.io.FileInputStream;
 import java.util.zip.DeflaterOutputStream;
@@ -40,8 +40,9 @@ public class FileService implements IFileService {
         // Should be fast and not load eveything into memory
         try (Stream<String> stream = Files.lines(Paths.get(path))) { // should i use parrallel?
             stream.forEachOrdered(callback);
-            
+
         } catch (Exception e) {
+            e.printStackTrace();
             // TODO: handle exception
             // GUI Dialog response
         }
@@ -84,7 +85,7 @@ public class FileService implements IFileService {
     public void appendToFile(String path, String line) {
         // try-resource-idiom
 
-       String formattedLine =  line + System.lineSeparator();
+        String formattedLine = line + System.lineSeparator();
         try {
             Files.write(Paths.get(path), formattedLine.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE,
                     StandardOpenOption.APPEND);
@@ -136,7 +137,7 @@ public class FileService implements IFileService {
             FileInputStream fileInputStream = new FileInputStream(sourcePath);
 
             FileOutputStream fileIoutputStream = new FileOutputStream(targetPath);
-            
+
             DeflaterOutputStream deflaterOutputStream = new DeflaterOutputStream(fileIoutputStream);
 
             int data;
@@ -155,13 +156,12 @@ public class FileService implements IFileService {
 
     @Override
     public void decompressFile(String sourcePath, String targetPath) {
-        
 
         try {
             FileInputStream fileInputStream = new FileInputStream(sourcePath);
 
             FileOutputStream fileOutputStream = new FileOutputStream(targetPath);
-            
+
             InflaterInputStream inflaterOutputStream = new InflaterInputStream(fileInputStream);
 
             int data;
@@ -171,11 +171,30 @@ public class FileService implements IFileService {
             }
 
             // close the files
-            
+
             inflaterOutputStream.close();
             fileOutputStream.close();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+
+    }
+
+    @Override
+    public void makeFileWithParents(String filePath)  {
+
+        try {
+            File file = new File(filePath);
+        // Files.createFile(path, attrs)
+        if (!file.getParentFile().exists()) {
+            // file.getParentFile().mkdirs();
+            Files.createDirectories( Paths.get(file.getParentFile().getAbsolutePath()));
+        }
+
+        file.createNewFile();
+        } catch (Exception e) {
+            e.printStackTrace();
+            //TODO: handle exception
         }
         
     }

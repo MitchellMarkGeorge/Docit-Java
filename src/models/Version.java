@@ -3,14 +3,14 @@ package models;
 // import org.reflections.Store;
 public class Version {
     private String versionNumber;
-    private String fileHash;
+    private String fileName ;
     private String comments;
     private String date;
 
     // this constructor is too big
-    public Version(String versionNumber, String fileHash, String date, String comments) {
+    public Version(String versionNumber, String fileName, String date, String comments) {
         this.versionNumber = versionNumber;
-        this.fileHash = fileHash;
+        this.fileName = fileName;
         this.date = date;
         this.comments = comments;
         
@@ -26,8 +26,8 @@ public class Version {
         return date;
     }
 
-    public String getFileHash() {
-        return fileHash;
+    public String getFileName() {
+        return fileName;
     }
 
     public String getVersionNumber() {
@@ -42,7 +42,7 @@ public class Version {
     @Override
     public String toString() {
         
-        return versionNumber + " " + fileHash + " " + date + " " + comments;
+        return versionNumber + " " + fileName + " " + date + " " + comments;
     }
 
     

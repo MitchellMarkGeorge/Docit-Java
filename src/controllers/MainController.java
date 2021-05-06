@@ -1,11 +1,14 @@
 package controllers;
 
+import java.net.URL;
 import java.util.Optional;
+import java.util.ResourceBundle;
 
 import di.Container;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 // import javafx.scene.control.Label;
 // import javafx.scene.control.ListView;
@@ -28,7 +31,7 @@ import services.interfaces.IStateService;
 
 //should show the current and latest version version SOMEHOW
 
-public class MainController implements Controller { // need to fix this
+public class MainController implements Initializable { // need to fix this
 
     @FXML
     private Label projectLabel;
@@ -54,7 +57,7 @@ public class MainController implements Controller { // need to fix this
     // Initializable
 
     @Override
-    public void initialize() {
+    public void initialize(URL location, ResourceBundle resources) {
 
         
         // new TextField().repl
@@ -144,6 +147,7 @@ public class MainController implements Controller { // need to fix this
 
             projectLabel.setText(newS);
             ObservableList<Version> projectVersions = selectedProject.getVersions();
+            System.out.println(projectVersions);
             tableView.setItems(projectVersions);
 
         });
@@ -157,17 +161,7 @@ public class MainController implements Controller { // need to fix this
 
     }
 
-    @Override
-    public void onLoad() {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void onClosing() {
-        // TODO Auto-generated method stub
-
-    }
+    
 
     @FXML
     public void createNewVersion(ActionEvent event) {
@@ -180,9 +174,13 @@ public class MainController implements Controller { // need to fix this
             dialog.setContentText("Enter comments:");
 
             Optional<String> result = dialog.showAndWait();
-
-            if (result.isPresent() && result.get() != null) {
+            // System.out.println(result.get());
+            if (result.isPresent()) {
                 String comments = result.get();
+
+                if (comments.isBlank()) {
+                    comments = "None";
+                }
 
                 commandService.newVersion(comments);
             }
@@ -207,6 +205,11 @@ public class MainController implements Controller { // need to fix this
         Stage newProjectDialog = this.stateService.getNewProjectStage();
 
         newProjectDialog.show();
+    }
+
+    @FXML
+    public void showProjectDetails() {
+
     }
 
 }

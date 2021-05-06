@@ -1,5 +1,8 @@
 package controllers;
 
+import java.net.URL;
+import java.util.ResourceBundle;
+
 import di.Container;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -15,8 +18,7 @@ public class ViewVersionController implements Controller {
     public Label versionNumberLabel;
     @FXML
     public Label dateLabel;
-    @FXML
-    public Label fileHashLabel;
+    
     @FXML
     public Label commentsLabel;
 
@@ -24,9 +26,9 @@ public class ViewVersionController implements Controller {
     ICommandService commandService = (ICommandService) Container.resolveDependency(ICommandService.class);
 
     @Override
-    public void initialize() {
+    public void initialize(URL location, ResourceBundle resources) {
         // Version currentVersion = stateService.getCurrentVersion();
-
+        // versionNumberLabel.textProperty().b
         // versionNumberLabel.setText(currentVersion.getVersionNumber());
         // dateLabel.setText(currentVersion.getDate());
         // fileHashLabel.setText(currentVersion.getFileHash());
@@ -40,7 +42,6 @@ public class ViewVersionController implements Controller {
 
         versionNumberLabel.setText(currentVersion.getVersionNumber());
         dateLabel.setText(currentVersion.getDate());
-        fileHashLabel.setText(currentVersion.getFileHash());
         commentsLabel.setText(currentVersion.getComments());
     }
 

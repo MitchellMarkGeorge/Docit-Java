@@ -39,7 +39,8 @@ public class CommandService implements ICommandService {
     // }
 
     /**
-     * Do siagram to showcase how each command affects the timeline/ how the timeline works ingeneral
+     * Do siagram to showcase how each command affects the timeline/ how the
+     * timeline works ingeneral
      */
 
     @Override
@@ -49,9 +50,12 @@ public class CommandService implements ICommandService {
             ObservableList<String> projects = FXCollections.observableArrayList();
             // return null;
             Path docitPath = Path.of(pathService.getDocitPath());
-            // could have some files
-            Files.list(docitPath).map(path -> path.toFile()).filter(file -> file.isDirectory())
-                    .forEachOrdered(file -> projects.add(file.getName()));
+
+            if (Files.exists(docitPath)) {
+                // could have some files
+                Files.list(docitPath).map(path -> path.toFile()).filter(file -> file.isDirectory())
+                        .forEachOrdered(file -> projects.add(file.getName()));
+            }
 
             return projects; // set to state
         } catch (IOException e) {
@@ -65,29 +69,52 @@ public class CommandService implements ICommandService {
     @Override
     public void initProject(String documentPath, String projectName) {
         // TODO Auto-generated method stub
+        try {
 
-        Path newProjectPath = Paths.get(pathService.getDocitPath(), projectName);
-        System.out.println(newProjectPath);
-        if (Files.exists(newProjectPath)) {
-            // throw new Error("Project " + projectName + " already exists");
-            errorService.showErrorDialog("Project " + projectName + " already exists");
-            return;
+            /**
+             * Here, i should make: the config file empty versions file empty version_files
+             * folder
+             * 
+             */
+            pathService.updateProjectName(projectName); // for paths to work
+
+            Path newProjectPath = Paths.get(pathService.getProjectPath());
+
+            // String newProjectPath = pathService.getProjectPath();
+
+            System.out.println(newProjectPath);
+            if (Files.exists(newProjectPath)) {
+                // throw new Error("Project " + projectName + " already exists");
+                errorService.showErrorDialog("Project " + projectName + " already exists");
+                return;
+            }
+
+            Config newConfig = new Config();
+            // String newConfigPath = Paths.get(newProjectPath.toString(),
+            // "config").toString();
+            String newConfigPath = pathService.getConfigPath();
+            System.out.println(newConfigPath);
+            newConfig.set("DOCUMENT_PATH", documentPath);
+            newConfig.set("CURRENT_VERSION", "0"); // this chages based on rollbacks
+            newConfig.set("LATEST_VERSION", "0"); // this follows linear history (dosent change with rollbacks)
+            // makeParentFolders(newConfigPath);
+            fileServce.makeFileWithParents(newConfigPath);
+            resourceLoader.saveConfig(newConfig, newConfigPath);
+
+            fileServce.makeFileWithParents(pathService.getVersionsPath());
+
+            Files.createDirectories(Paths.get(pathService.getVersionFilesPath()));
+
+           ObservableList<String> projectList = stateService.getProjectList();
+            //stateService.addProject(projectName); 
+            
+            projectList.add(projectName);  // this in turn should update the
+            // listview in the main conrtroller using Observable lists
+
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
-
-        Config newConfig = new Config();
-        String newConfigPath = Paths.get(newProjectPath.toString(), "config").toString();
-        System.out.println(newConfigPath);
-        newConfig.set("DOCUMENT_PATH", documentPath);
-        newConfig.set("CURRENT_VERSION", "0"); // this chages based on rollbacks
-        newConfig.set("LATEST_VERSION", "0"); // this follows linear history (dosent change with rollbacks)
-        makeParentFolders(newConfigPath);
-        resourceLoader.saveConfig(newConfig, newConfigPath);
-
-        
-
-        stateService.addProject(projectName); // this in turn should update the
-        // listview in the main conrtroller using Observable lists
-
     }
 
     // this method is meant to create the parent folders given a filepath (like)
@@ -124,8 +151,15 @@ public class CommandService implements ICommandService {
 
             String documentPath = projectConfig.get("DOCUMENT_PATH");
             String currentVersionNumber = projectConfig.get("CURRENT_VERSION");
-            String fileHash = asByteSource(new File(documentPath)).hash(Hashing.sha256()).toString();
+            // String fileHash = asByteSource(new File(documentPath)).hash(Hashing.sha256()).toString(); // hash file
 
+            Date date = new Date();
+            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+            String stringDate = formatter.format(date);
+
+
+            String compressedFilename = "v" + newVersionNumber + "#" + stringDate;
+            // filename v1#6/5/21
             System.out.println(currentVersionNumber);
 
             // System.out.println(getCurrentVersion(projectVersions, currentVersionNumber));
@@ -139,18 +173,16 @@ public class CommandService implements ICommandService {
             // return; // show error dialog
             // }
 
-            String targetPath = Paths.get(pathService.getVersionFilesPath(), fileHash).toString();
+            String targetPath = Paths.get(pathService.getVersionFilesPath(), compressedFilename).toString();
             makeParentFolders(targetPath);
 
             fileServce.compressFile(documentPath, targetPath);
 
-            Date date = new Date();
-            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-            String stringDate = formatter.format(date);
+            
 
             String newVersionNumberString = Integer.toString(newVersionNumber);
 
-            Version newVersion = new Version(newVersionNumberString, fileHash, stringDate, comments);
+            Version newVersion = new Version(newVersionNumberString, compressedFilename, stringDate, comments);
 
             projectConfig.set("LATEST_VERSION", newVersionNumberString);
             projectConfig.set("CURRENT_VERSION", newVersionNumberString);
@@ -160,9 +192,13 @@ public class CommandService implements ICommandService {
 
             projectVersions.add(newVersion);
 
+            // return newVersion;
+
         } catch (Exception e) {
             e.printStackTrace();
             // TODO: handle exception
+
+            // return null;
         }
 
     }
@@ -184,9 +220,9 @@ public class CommandService implements ICommandService {
         Project currentProject = stateService.getCurrentProject();
         Config projectConfig = currentProject.getConfig();
         // ObservableList<Version> projectVersions = currentProject.getVersions();
-        String fileHash = version.getFileHash();
+        String fileName = version.getFileName();
 
-        String versionFilePath = Paths.get(pathService.getVersionFilesPath(), fileHash).toString();
+        String versionFilePath = Paths.get(pathService.getVersionFilesPath(), fileName).toString();
 
         fileServce.decompressFile(versionFilePath, projectConfig.get("DOCUMENT_PATH"));
 
@@ -201,7 +237,7 @@ public class CommandService implements ICommandService {
         Project currentProject = stateService.getCurrentProject();
         Config projectConfig = currentProject.getConfig();
         String documentPath = projectConfig.get("DOCUMENT_PATH");
-        String fileHash = version.getFileHash();
+        String compressedFileName = version.getFileName();
 
         String parentDirname = Paths.get(documentPath).getParent().toString();
 
@@ -213,7 +249,7 @@ public class CommandService implements ICommandService {
 
         String peekedFilePath = Paths.get(parentDirname, documentFileName + " v" + versionNumber + ".docx").toString();
 
-        String versionFilePath = Paths.get(pathService.getVersionFilesPath(), fileHash).toString();
+        String versionFilePath = Paths.get(pathService.getVersionFilesPath(), compressedFileName).toString();
         fileServce.decompressFile(versionFilePath, peekedFilePath);
 
     }
