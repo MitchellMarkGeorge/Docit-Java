@@ -25,7 +25,6 @@
         <rowConstraints>
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
@@ -33,10 +32,8 @@
             <Label fx:id="versionNumberLabel" text="Label" GridPane.columnIndex="1" />
             <Label text="Date Created:" GridPane.rowIndex="1" />
             <Label fx:id="dateLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <Label text="File Hash (for nerds):" GridPane.rowIndex="2" />
-            <Label fx:id="fileHashLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <Label text="Comments:" GridPane.rowIndex="3" />
-            <Label fx:id="commentsLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <Label text="Comments:" GridPane.rowIndex="2" />
+            <Label fx:id="commentsLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2" />
          </children>
       </GridPane>
       <ButtonBar prefHeight="40.0" prefWidth="200.0">

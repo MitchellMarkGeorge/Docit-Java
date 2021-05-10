@@ -6,9 +6,9 @@ import java.util.ResourceBundle;
 import di.Container;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.stage.Stage;
 import models.Controller;
 import models.Version;
-import services.CommandService;
 import services.interfaces.ICommandService;
 import services.interfaces.IStateService;
 
@@ -51,15 +51,23 @@ public class ViewVersionController implements Controller {
 
     }
 
+
     @FXML
     public void peekVersion() {
         Version version = stateService.getCurrentVersion();
         commandService.peekVersion(version);
+        close();
     }
 
     @FXML
     public void rollbackVersion() {
         Version version = stateService.getCurrentVersion();
         commandService.rollbackVersion(version);
+        close();
+    }
+
+    public void close() {
+        Stage viewVersionStage = stateService.getViewVersionStage();
+        viewVersionStage.close();
     }
 }

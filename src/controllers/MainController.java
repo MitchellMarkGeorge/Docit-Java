@@ -1,30 +1,26 @@
 package controllers;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
-
 import di.Container;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-// import javafx.scene.control.Label;
-// import javafx.scene.control.ListView;
-// import javafx.scene.control.TableView;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextInputDialog;
-// import javafx.scene.control.SplitPane.Divider;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
-import models.Controller;
 import models.Project;
 import models.Version;
 import services.interfaces.ICommandService;
+import services.interfaces.IErrorService;
 import services.interfaces.IPathService;
 import services.interfaces.IResourceLoader;
 import services.interfaces.IStateService;
@@ -50,6 +46,7 @@ public class MainController implements Initializable { // need to fix this
     @FXML
     private TableColumn<Version, String> commentsColumn;
     IStateService stateService = (IStateService) Container.resolveDependency(IStateService.class);
+    IErrorService errorService = (IErrorService) Container.resolveDependency(IErrorService.class);
     ICommandService commandService = (ICommandService) Container.resolveDependency(ICommandService.class);
     IResourceLoader resouceService = (IResourceLoader) Container.resolveDependency(IResourceLoader.class);
     IPathService pathService = (IPathService) Container.resolveDependency(IPathService.class);
@@ -59,109 +56,66 @@ public class MainController implements Initializable { // need to fix this
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        
-        // new TextField().repl
-        // TODO Auto-generated method stub
-        // System.out.println(listView.getItems());
-        // listView.setPlaceholder(new Label("No Projects"));
 
         versionColumn.setCellValueFactory(new PropertyValueFactory<>("versionNumber"));
         dateColumn.setCellValueFactory(new PropertyValueFactory<>("date"));
         commentsColumn.setCellValueFactory(new PropertyValueFactory<>("comments"));
 
-        // tableView.getItems().add(new Version("0", "00908jy", "Today", "No
-        // Comments"));
-        // tableView.getItems().add(new Version("1", "fjdofjdo232", "Today", "No
-        // Comments"));
-        // test.getScene().getWindow();
+        this.loadProjects();
 
-        // tableView.getSelectionModel().getSelec
-        // for (int i = 0; i <= 6; i++) {
-        // listView.getItems().add("Hello " + i);
-        // }
-
-        // figure this out!!!!
-        ObservableList<String> projects = commandService.getProjects();
-        stateService.setProjectList(projects);
-        listView.setItems(projects);
-
-        if (projects.isEmpty()) {
-            listView.setPlaceholder(new Label("No Projects")); // use button
-        }
-        // projects.addListener((ListChangeListener<String>) change -> {
-
-        // while (change.next()) {
-        // if (change.wasAdded()) {
-
-        // String newItem = change.getAddedSubList().get(0);
-        // System.out.println(newItem);
-        // listView.getItems().add(newItem);
-
-        // // listView.rem
-        // // System.out.println(stateService.getProjectList());
-
-        // }
-        // }
-        // });
-        // even if it is empty
-        // if (projects.size() > 0) {
-        // listView.setItems(projects);
-
-        // // do they all have the same reference? They do! This means if i add a
-        // project to the state service, it will reflect in the local project valie
-
-        // } else {
-        // listView.setPlaceholder(new Label("No Projects"));
-
-        // }
-
-        tableView.getSelectionModel().selectedItemProperty().addListener((ov, oldO, newO) -> {
-            // this event is called when a project is seleted and a row was
-            // previously selected, leading to it being null
-            if (newO != null) {
-                System.out.println("Table selected");
-                System.out.println(newO);
-
-                stateService.setCurrentVersion(newO);
-                stateService.getViewVersionStage().show();
-            }
+        tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldVersion, newVersion) -> {
+            this.onTableClick(newVersion);
 
         });
 
-        // PropertyValueFactory
 
-        // listView.setOnMouseClicked(e -> {
-        // System.out.println(listView.getSelectionModel().getSelectedItem());
-        // });
-
-        listView.getSelectionModel().selectedItemProperty().addListener((ov, oldS, newS) -> {
-            // System.out.println("Old " + oldS + " New " + newS);
-            System.out.println("List selected");
-
-            // stateService.setProjectName(newS);
-
-            Project selectedProject = resouceService.loadProject(newS);
-
-            stateService.setProjectName(newS);
-            stateService.setCurrentProject(selectedProject);
-
-            projectLabel.setText(newS);
-            ObservableList<Version> projectVersions = selectedProject.getVersions();
-            System.out.println(projectVersions);
-            tableView.setItems(projectVersions);
-
+        listView.getSelectionModel().selectedItemProperty().addListener((observable, oldProjectName, newProjectName) -> {
+            this.onListClick(newProjectName);
         });
 
-        // listView.getSelectionModel().getSelectedIndex()
-        // test.children
-        // listView.getItems().add("Hello");
-        // listView.setItems(value);
-
-        // tableView.setPlaceholder(new Label("No version"));
 
     }
 
-    
+    public void loadProjects() {
+
+        try {
+            ObservableList<String> projects = commandService.getProjects();
+            stateService.setProjectList(projects);
+            listView.setItems(projects);
+
+            if (projects.isEmpty()) {
+                listView.setPlaceholder(new Label("No Projects")); // use button
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            errorService.showErrorDialog("There was an error trying to load projects");
+
+
+        }
+
+    }
+
+    public void onTableClick(Version version) {
+        if (version != null) {
+            System.out.println("Table selected");
+            System.out.println(version);
+
+            stateService.setCurrentVersion(version);
+            stateService.getViewVersionStage().show(); // could have used a custome method here
+        }
+    }
+
+    public void onListClick(String projectName) {
+        Project selectedProject = resouceService.loadProject(projectName);
+
+            stateService.setProjectName(projectName);
+            stateService.setCurrentProject(selectedProject);
+
+            projectLabel.setText(projectName);
+            ObservableList<Version> projectVersions = selectedProject.getVersions();
+            System.out.println(projectVersions);
+            tableView.setItems(projectVersions);
+    }
 
     @FXML
     public void createNewVersion(ActionEvent event) {
@@ -179,26 +133,25 @@ public class MainController implements Initializable { // need to fix this
                 String comments = result.get();
 
                 if (comments.isBlank()) {
-                    comments = "None";
+                    comments = "No Comment";
                 }
 
-                commandService.newVersion(comments);
+                Version newVersion = commandService.newVersion(comments);
+
+                if (newVersion != null) {
+
+                    Project currentProject = stateService.getCurrentProject();
+
+                    ObservableList<Version> projectVersions = currentProject.getVersions();
+
+                    projectVersions.add(newVersion);
+
+                }
+
             }
-            System.out.println(result.isPresent());
+            // System.out.println(result.isPresent());
 
         }
-    }
-
-    public void peekVersion(ActionEvent event) {
-
-    }
-
-    public void rollbackVersion(ActionEvent event) {
-
-    }
-
-    public void viewVersion(ActionEvent event) {
-
     }
 
     public void showNewProjectDialog(ActionEvent event) {
@@ -213,7 +166,7 @@ public class MainController implements Initializable { // need to fix this
         if (stateService.getProjectName() != null) {
             stateService.getProjectDetailsStage().show();
         }
-        
+
     }
 
 }

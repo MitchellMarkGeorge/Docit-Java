@@ -1,10 +1,12 @@
 package controllers;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 import di.Container;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -12,8 +14,8 @@ import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import models.Controller;
-import services.PathService;
 import services.interfaces.ICommandService;
+import services.interfaces.IErrorService;
 import services.interfaces.IPathService;
 import services.interfaces.IStateService;
 
@@ -37,6 +39,7 @@ public class NewProjectController implements Controller {
     private String documentPath;
 
     IStateService stateService = (IStateService) Container.resolveDependency(IStateService.class); // cast it to T
+    IErrorService errorService = (IErrorService) Container.resolveDependency(IErrorService.class);
     IPathService pathService = (IPathService) Container.resolveDependency(IPathService.class);
     ICommandService commandService = (ICommandService) Container.resolveDependency(ICommandService.class);
 
@@ -52,13 +55,14 @@ public class NewProjectController implements Controller {
     @Override
     public void onClosing() {
         // TODO Auto-generated method stub
-        
+        resetDialog();
+
     }
 
     @Override
     public void onLoad() {
         // TODO Auto-generated method stub
-        
+
     }
 
     @FXML
@@ -79,17 +83,29 @@ public class NewProjectController implements Controller {
 
     @FXML
     public void createProject() {
-        String projectName = projectNameTextField.getText(); // is required
-        if (projectName != null && !projectName.isBlank()) {
-            commandService.initProject(this.documentPath, projectName);
 
-            resetDialog();
+        try {
+            String projectName = projectNameTextField.getText(); // is required
+            if (projectName != null && !projectName.isBlank()) {
+                commandService.initProject(this.documentPath, projectName);
 
-            stateService.getNewProjectStage().close();
+                ObservableList<String> projectList = stateService.getProjectList();
+                // stateService.addProject(projectName);
 
-            
-           
+                projectList.add(projectName);
+
+                // resetDialog();
+
+                stateService.getNewProjectStage().close();
+
+            }
+        } catch (IOException e) {
+            // TODO: handle exception
+            e.printStackTrace();
+            errorService.showErrorDialog("There was an error in creating the new project.");
+
         }
+
     }
 
     @FXML

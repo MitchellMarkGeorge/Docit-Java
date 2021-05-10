@@ -1,21 +1,22 @@
 package services.interfaces;
 
 import models.Version;
-import java.util.List;
+
+import java.io.IOException;
 
 import javafx.collections.ObservableList;
 
 public interface ICommandService {
 
-    void initProject(String documentPath, String alias); // save the new config config in the cache
+    void initProject(String documentPath, String alias) throws IOException;  // save the new config config in the cache
 
     // void newVersion(String comments);
 
-    ObservableList<String> getProjects();
+    ObservableList<String> getProjects() throws IOException;
 
-    void newVersion(String comments);
+    // void newVersion(String comments);
 
-
+    Version newVersion(String comments);
 
     void peekVersion(Version version); // pass verion?
 

@@ -11,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 
+
 public class App extends Application {
     public static void main(String[] args) {
         launch(args);
@@ -22,6 +23,10 @@ public class App extends Application {
 
     @Override
     public void start(Stage mainStage) throws Exception {
+
+        
+
+
         // have this in sperate "module"
 
         // THE ORDER OF THE DEPENDENCIES IS IMPORTANT
@@ -48,6 +53,7 @@ public class App extends Application {
         mainStage.setHeight(600);
         mainStage.setMinHeight(600);
         mainStage.setMinWidth(800);
+        
 
         // new HBox().set
         // new ListView().setW

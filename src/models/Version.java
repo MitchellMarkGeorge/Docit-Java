@@ -34,10 +34,6 @@ public class Version {
         return versionNumber;
     }
 
-    public static void main(String[] args) {
-        System.out.println(System.getProperty("javafx.version")); 
-       
-    }
 
     @Override
     public String toString() {

@@ -1,13 +1,9 @@
 package di;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import services.FileService;
-import services.HashService;
-import services.interfaces.IFileService;
 
 public class Container {
 

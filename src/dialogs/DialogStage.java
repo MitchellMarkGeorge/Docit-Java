@@ -9,7 +9,6 @@ import di.Container;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.stage.Stage;
 import services.interfaces.IStateService;
 
 public class DialogStage extends Stage {// better name
@@ -37,11 +36,16 @@ public class DialogStage extends Stage {// better name
         Controller controller = loader.getController();
         this.setOnShowing(event -> {
             controller.onLoad(); // can change name
+
         });
 
         this.setOnHiding(event -> {
             controller.onClosing(); // can change name
+
+            System.out.println("Closing...");
         });
+
+        
 
         this.setScene(new Scene(root));
 

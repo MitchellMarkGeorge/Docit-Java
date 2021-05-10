@@ -9,6 +9,7 @@ import javafx.scene.control.Label;
 import models.Config;
 import models.Controller;
 import services.interfaces.IStateService;
+
 /**
  * ProjectVersionsController
  */
@@ -24,7 +25,6 @@ public class ProjectDetailsController implements Controller {
     private Label latestVersionLabel;
 
     IStateService stateService = (IStateService) Container.resolveDependency(IStateService.class);
-    
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -34,13 +34,26 @@ public class ProjectDetailsController implements Controller {
 
     @Override
     public void onLoad() {
-        // TODO Auto-generated method stub
+    
 
-     Config config = stateService.getCurrentProject().getConfig();
+        Config config = stateService.getCurrentProject().getConfig();
 
-     documentPathLabel.setText(config.get("DOCUMENT_PATH"));
-     currentVersionLabel.setText(config.get("CURRENT_VERSION"));
-     latestVersionLabel.setText(config.get("LATEST_VERSION"));
+        documentPathLabel.setText(config.get("DOCUMENT_PATH"));
+
+        String currentVersion = config.get("CURRENT_VERSION");
+        String latestVersion = config.get("LATEST_VERSION");
+        System.out.println(currentVersion.equals("0"));
+        System.out.println(latestVersion.equals("0"));
+        // when a fresh project is created, they will both keys will be 0. There is also
+        // no other time that one will be zero as soon as a version is created. The least
+        // version it can EVER go back to is 1. a version 0 is basically null
+        if (currentVersion.equals("0") && latestVersion.equals("0")) {
+           currentVersion += " (No Versions created)";
+            latestVersion += " (No Versions created)";
+        }
+
+        currentVersionLabel.setText(currentVersion);
+        latestVersionLabel.setText(latestVersion);
 
     }
 

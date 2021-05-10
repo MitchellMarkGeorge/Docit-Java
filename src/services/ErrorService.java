@@ -15,6 +15,8 @@ public class ErrorService implements IErrorService {
         alert.setContentText(text);
 
         alert.show(); // showAndWait()?
+
+        // throw new Error(text);
         
     }
 }

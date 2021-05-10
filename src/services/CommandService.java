@@ -1,6 +1,6 @@
 package services;
 
-import java.io.File;
+
 import java.io.IOException;
 import models.Version;
 import java.nio.file.Files;
@@ -8,7 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
+
 
 import di.Container;
 import javafx.collections.FXCollections;
@@ -23,9 +23,9 @@ import services.interfaces.IPathService;
 import services.interfaces.IResourceLoader;
 import services.interfaces.IStateService;
 
-import static com.google.common.io.Files.asByteSource;
+import java.util.UUID;
 
-import com.google.common.hash.Hashing;
+
 
 public class CommandService implements ICommandService {
 
@@ -41,12 +41,13 @@ public class CommandService implements ICommandService {
     /**
      * Do siagram to showcase how each command affects the timeline/ how the
      * timeline works ingeneral
+     * @throws IOException
      */
 
     @Override
-    public ObservableList<String> getProjects() {
-
-        try {
+    public ObservableList<String> getProjects() throws IOException {
+        // errorService.showErrorDialog("There was an error in loading the projects");
+        // try {
             ObservableList<String> projects = FXCollections.observableArrayList();
             // return null;
             Path docitPath = Path.of(pathService.getDocitPath());
@@ -58,18 +59,20 @@ public class CommandService implements ICommandService {
             }
 
             return projects; // set to state
-        } catch (IOException e) {
-            e.printStackTrace();
-            errorService.showErrorDialog("Error in geting projects");
-            throw new Error("Error in reading the file");
-        } // should only be
+        // } catch (IOException e) {
+        //     e.printStackTrace();
+        //     errorService.showErrorDialog("There was an error in loading the projects");
+        //     // System.out.println("Hello");
+        //     return null;
+        //     // throw new Error("Error in reading the file");
+        // } // should only be
 
     }
 
     @Override
-    public void initProject(String documentPath, String projectName) {
+    public void initProject(String documentPath, String projectName) throws IOException {
         // TODO Auto-generated method stub
-        try {
+        // try {
 
             /**
              * Here, i should make: the config file empty versions file empty version_files
@@ -105,46 +108,28 @@ public class CommandService implements ICommandService {
 
             Files.createDirectories(Paths.get(pathService.getVersionFilesPath()));
 
-           ObservableList<String> projectList = stateService.getProjectList();
-            //stateService.addProject(projectName); 
+            // return true;
+            // do this in the controller
+        //    ObservableList<String> projectList = stateService.getProjectList();
+        //     //stateService.addProject(projectName); 
             
-            projectList.add(projectName);  // this in turn should update the
+        //     projectList.add(projectName);  // this in turn should update the
             // listview in the main conrtroller using Observable lists
 
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        
     }
 
     // this method is meant to create the parent folders given a filepath (like)
     // should probably be in the FileService
-    private void makeParentFolders(String filePath) {
-        File file = new File(filePath);
-
-        if (file.getParentFile() != null) {
-            file.getParentFile().mkdirs();
-        }
-    }
-
-    private Version getCurrentVersion(ObservableList<Version> versions, String versionNumber) {
-        for (Version version : versions) {
-            if (version.getVersionNumber().equals(versionNumber)) {
-                return version;
-            }
-        }
-
-        return null;
-    }
-
+   
     @Override
-    public void newVersion(String comments) {
-        // TODO Auto-generated method stub
+    public Version newVersion(String comments) { // does this throw
+        
 
-        try {
+        // try {
             Project currentProject = stateService.getCurrentProject();
             Config projectConfig = currentProject.getConfig();
-            ObservableList<Version> projectVersions = currentProject.getVersions();
+            // ObservableList<Version> projectVersions = currentProject.getVersions();
 
             int previousVersionNumber = Integer.parseInt(projectConfig.get("LATEST_VERSION"));
             int newVersionNumber = previousVersionNumber + 1;
@@ -158,9 +143,9 @@ public class CommandService implements ICommandService {
             String stringDate = formatter.format(date);
 
 
-            String compressedFilename = "v" + newVersionNumber + "#" + stringDate;
-            // filename v1#6/5/21
-            System.out.println(currentVersionNumber);
+            String compressedFilename = UUID.randomUUID().toString();
+            
+            // System.out.println(currentVersionNumber);
 
             // System.out.println(getCurrentVersion(projectVersions, currentVersionNumber));
             // get current version
@@ -174,7 +159,7 @@ public class CommandService implements ICommandService {
             // }
 
             String targetPath = Paths.get(pathService.getVersionFilesPath(), compressedFilename).toString();
-            makeParentFolders(targetPath);
+            // makeParentFolders(targetPath);
 
             fileServce.compressFile(documentPath, targetPath);
 
@@ -190,16 +175,18 @@ public class CommandService implements ICommandService {
             resourceLoader.saveConfig(projectConfig, pathService.getConfigPath());
             resourceLoader.saveVersion(newVersion, pathService.getVersionsPath());
 
-            projectVersions.add(newVersion);
+            // controller
+            // projectVersions.add(newVersion);
 
-            // return newVersion;
+            return newVersion;
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            // TODO: handle exception
+        // } catch (Exception e) {
+        //     e.printStackTrace();
+        //     // TODO: handle exception
+        //     errorService.showErrorDialog("There was an error in creating a new version");
 
-            // return null;
-        }
+        //     return null;
+        // }
 
     }
     // private void makeFile(String filename) {
