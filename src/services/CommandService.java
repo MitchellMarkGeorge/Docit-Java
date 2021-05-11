@@ -135,7 +135,7 @@ public class CommandService implements ICommandService {
             int newVersionNumber = previousVersionNumber + 1;
 
             String documentPath = projectConfig.get("DOCUMENT_PATH");
-            String currentVersionNumber = projectConfig.get("CURRENT_VERSION");
+            // String currentVersionNumber = projectConfig.get("CURRENT_VERSION");
             // String fileHash = asByteSource(new File(documentPath)).hash(Hashing.sha256()).toString(); // hash file
 
             Date date = new Date();
