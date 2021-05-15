@@ -19,7 +19,7 @@ public class Version {
     
 
     public String getComments() {
-        return comments;
+        return comments.replaceAll("_", " ");
     }
 
     public String getDate() {

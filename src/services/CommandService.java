@@ -2,19 +2,19 @@ package services;
 
 
 import java.io.IOException;
-import models.Version;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
+import java.util.UUID;
 
 import di.Container;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import models.Config;
 import models.Project;
+import models.Version;
 import services.interfaces.ICommandService;
 import services.interfaces.IErrorService;
 import services.interfaces.IFileService;
@@ -22,8 +22,6 @@ import services.interfaces.IFileService;
 import services.interfaces.IPathService;
 import services.interfaces.IResourceLoader;
 import services.interfaces.IStateService;
-
-import java.util.UUID;
 
 
 
@@ -203,7 +201,7 @@ public class CommandService implements ICommandService {
     // }
 
     @Override
-    public void rollbackVersion(Version version) {
+    public void rollbackVersion(Version version) { // file must be closed
         Project currentProject = stateService.getCurrentProject();
         Config projectConfig = currentProject.getConfig();
         // ObservableList<Version> projectVersions = currentProject.getVersions();

@@ -123,7 +123,7 @@ public class ResourceLoader implements IResourceLoader { // think of better name
         String versionNumber = versionsObject[0].trim();
         String fileName = versionsObject[1].trim();
         String date = versionsObject[2].trim();
-        String comments = versionsObject[3].trim(); // There must be a comment OR THE WHOLE THING BREAKS!!!
+        String comments = versionsObject[3].trim().replaceAll("_", " ");; // There must be a comment OR THE WHOLE THING BREAKS!!!
         
 
         return new Version(versionNumber, fileName, date, comments);

@@ -16,11 +16,16 @@ import java.util.stream.Stream;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
+import di.Container;
+import services.interfaces.IErrorService;
 import services.interfaces.IFileService;
 
 public class FileService implements IFileService {
 
     // private PathService pathService = new PathService(projectName)
+
+
+    IErrorService errorService = (IErrorService) Container.resolveDependency(IErrorService.class);
 
     // writing/ reading binary data should be handles differenetly
 
@@ -129,7 +134,7 @@ public class FileService implements IFileService {
     }
 
     @Override
-    public void compressFile(String sourcePath, String targetPath) {
+    public void compressFile(String sourcePath, String targetPath) { // should throw
         // Path source = Paths.get(sourcePath);
         // Path target = Paths.get(targetPath);
 
@@ -151,11 +156,12 @@ public class FileService implements IFileService {
             deflaterOutputStream.close();
         } catch (Exception e) {
             e.printStackTrace();
+            errorService.showErrorDialog("There was an error compressing the file. Make sure the document is closed.");
         }
     }
 
     @Override
-    public void decompressFile(String sourcePath, String targetPath) {
+    public void decompressFile(String sourcePath, String targetPath) { // should throw
 
         try {
             FileInputStream fileInputStream = new FileInputStream(sourcePath);
@@ -176,6 +182,8 @@ public class FileService implements IFileService {
             fileOutputStream.close();
         } catch (Exception e) {
             e.printStackTrace();
+
+            errorService.showErrorDialog("There was an error decompressing the file. Make sure the document is closed.");
         }
 
     }
