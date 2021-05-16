@@ -10,8 +10,7 @@ import services.interfaces.IPathService;
 public class PathService implements IPathService { // use abstract class
     // public String HOME_DIR = System.getProperty("user.home");
     // public String DOCIT_PATH = Paths.get(HOME_DIR, ".docit").toString();
-    private String projectName; // should it be a local variable??? Might remove and just have
-    
+   
     @Override
     public String basename(String filePath) {
 
@@ -36,29 +35,26 @@ public class PathService implements IPathService { // use abstract class
     public String getDocitPath() {
         return Paths.get(getHomeDir(), ".docit").toString();
     }
+    
+
     @Override
-    public void updateProjectName(String projectName) { // setProjectName
-        this.projectName = projectName;
+    public String getVersionFilesPath(String projectName) {
+        return Paths.get(getProjectPath(projectName), "version_files").toString();
     }
 
     @Override
-    public String getVersionFilesPath() {
-        return Paths.get(getProjectPath(), "version_files").toString();
+    public String getProjectPath(String projectName) {
+        return Paths.get(getDocitPath(), projectName).toString();
     }
 
     @Override
-    public String getProjectPath() {
-        return Paths.get(getDocitPath(), this.projectName).toString();
+    public String getVersionsPath(String projectName) {
+        return Paths.get(this.getProjectPath(projectName), "versions").toString();
     }
 
     @Override
-    public String getVersionsPath() {
-        return Paths.get(this.getProjectPath(), "versions").toString();
-    }
-
-    @Override
-    public String getConfigPath() {
-        return Paths.get(this.getProjectPath(), "config").toString();
+    public String getConfigPath(String projectName) {
+        return Paths.get(this.getProjectPath(projectName), "config").toString();
     }
 
 }

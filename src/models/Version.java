@@ -19,6 +19,7 @@ public class Version {
     
 
     public String getComments() {
+        // this is done for the view
         return comments.replaceAll("_", " ");
     }
 

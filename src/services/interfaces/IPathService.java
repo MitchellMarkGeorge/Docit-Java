@@ -4,13 +4,13 @@ public interface IPathService {
 
    
 
-    public void updateProjectName(String projectName);
+    // public void updateProjectName(String projectName);
     
-    public String getProjectPath();
+    public String getProjectPath(String projectName);
 
-    public String getVersionsPath();
+    public String getVersionsPath(String projectName);
 
-    public String getConfigPath();
+    public String getConfigPath(String projectName);
 
     public String getHomeDir();
     
@@ -18,5 +18,5 @@ public interface IPathService {
 
     public String basename(String filePath);
 
-    public String getVersionFilesPath();
+    public String getVersionFilesPath(String projectName);
 }

@@ -5,21 +5,22 @@ import models.Controller;
 
 import java.io.IOException;
 
-import di.Container;
+
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import services.interfaces.IStateService;
+
 
 public class DialogStage extends Stage {// better name
 
-    private IStateService stateService = (IStateService) Container.resolveDependency(IStateService.class);
+    
     // private Controller controller;
 
-    public DialogStage(String title, String fxmlPath) throws IOException { // do this for the MainController
+    public DialogStage(String title, String fxmlPath, Stage mainStage) throws IOException { // do this for the MainController
         super();
         // this.controller = controller;
-        this.initOwner(stateService.getMainStage());
+        this.initOwner(mainStage);// should be passed in from controller
+        // this.initModality(modality);
         this.setTitle(title);
         this.setHeight(300);
         this.setWidth(400);
@@ -32,10 +33,15 @@ public class DialogStage extends Stage {// better name
         // loader.setController(controller); // this.controller
         Parent root = loader.load();
 
+
+        // shoudl i be able to get the controller??????
+
+
         // lifecycle hooks
         Controller controller = loader.getController();
+        controller.setStage(this);
         this.setOnShowing(event -> {
-            controller.onLoad(); // can change name
+            controller.onLoading(); // can change name
 
         });
 

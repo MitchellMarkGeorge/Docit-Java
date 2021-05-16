@@ -12,9 +12,7 @@ public class Project {
     }
 
     public Config getConfig() {
-        return config;
-
-        
+        return config;    
     }
 
     public ObservableList<Version> getVersions() {

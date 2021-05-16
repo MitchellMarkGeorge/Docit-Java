@@ -2,7 +2,7 @@ package tests.services.mocks;
 
 import java.io.IOException;
 
-import javax.print.DocFlavor.STRING;
+
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -33,7 +33,7 @@ public class CommandService implements ICommandService {
 
     @Override
     public void initProject(String documentPath, String alias) throws IOException {
-        // TODO Auto-generated method stub
+       
 
         
 
@@ -46,17 +46,17 @@ public class CommandService implements ICommandService {
 
         // resourceLoader.saveConfig(config, configPath);
 
-        stateService.addProject(alias); // technicall
+        // stateService.addProject(alias); // technicall
 
     }
 
     @Override
     public Version newVersion(String comments) {
-        // TODO Auto-generated method stub
+        
 
         
 
-        Version newVersion = new Version()
+        // Version newVersion = new Version()
         return null;
     }
 

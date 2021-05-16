@@ -68,8 +68,8 @@ public class CommandService implements ICommandService {
     }
 
     @Override
-    public void initProject(String documentPath, String projectName) throws IOException {
-        // TODO Auto-generated method stub
+    public void initProject(String documentPath, String projectName) throws Exception {
+        
         // try {
 
             /**
@@ -77,9 +77,9 @@ public class CommandService implements ICommandService {
              * folder
              * 
              */
-            pathService.updateProjectName(projectName); // for paths to work
+            
 
-            Path newProjectPath = Paths.get(pathService.getProjectPath());
+            Path newProjectPath = Paths.get(pathService.getProjectPath(projectName));
 
             // String newProjectPath = pathService.getProjectPath();
 
@@ -93,7 +93,7 @@ public class CommandService implements ICommandService {
             Config newConfig = new Config();
             // String newConfigPath = Paths.get(newProjectPath.toString(),
             // "config").toString();
-            String newConfigPath = pathService.getConfigPath();
+            String newConfigPath = pathService.getConfigPath(projectName);
             System.out.println(newConfigPath);
             newConfig.set("DOCUMENT_PATH", documentPath);
             newConfig.set("CURRENT_VERSION", "0"); // this chages based on rollbacks
@@ -102,9 +102,9 @@ public class CommandService implements ICommandService {
             fileServce.makeFileWithParents(newConfigPath);
             resourceLoader.saveConfig(newConfig, newConfigPath);
 
-            fileServce.makeFileWithParents(pathService.getVersionsPath());
+            fileServce.makeFileWithParents(pathService.getVersionsPath(projectName));
 
-            Files.createDirectories(Paths.get(pathService.getVersionFilesPath()));
+            Files.createDirectories(Paths.get(pathService.getVersionFilesPath(projectName)));
 
             // return true;
             // do this in the controller
@@ -121,12 +121,15 @@ public class CommandService implements ICommandService {
     // should probably be in the FileService
    
     @Override
-    public Version newVersion(String comments) { // does this throw
+    public Version newVersion(String comments) throws Exception { // does this throw
         
 
         // try {
-            Project currentProject = stateService.getCurrentProject();
+            // Project currentProject = stateService.getCurrentProject();
+            Project currentProject = (Project) stateService.get("currentProject");
             Config projectConfig = currentProject.getConfig();
+            // String projectName = stateService.getProjectName();
+            String projectName = (String) stateService.get("projectName");
             // ObservableList<Version> projectVersions = currentProject.getVersions();
 
             int previousVersionNumber = Integer.parseInt(projectConfig.get("LATEST_VERSION"));
@@ -143,21 +146,9 @@ public class CommandService implements ICommandService {
 
             String compressedFilename = UUID.randomUUID().toString();
             
-            // System.out.println(currentVersionNumber);
-
-            // System.out.println(getCurrentVersion(projectVersions, currentVersionNumber));
-            // get current version
-            // Version currentVersion = getCurrentVersion(projectVersions,
-            // currentVersionNumber);
-
-            // // // Dosen't let the user create a new version of the file has the same
-            // content (what the hashes are made from)
-            // if (currentVersion.getFileHash().equals(fileHash)) {
-            // return; // show error dialog
-            // }
-
-            String targetPath = Paths.get(pathService.getVersionFilesPath(), compressedFilename).toString();
-            // makeParentFolders(targetPath);
+            
+            String targetPath = Paths.get(pathService.getVersionFilesPath(projectName), compressedFilename).toString();
+           
 
             fileServce.compressFile(documentPath, targetPath);
 
@@ -170,8 +161,8 @@ public class CommandService implements ICommandService {
             projectConfig.set("LATEST_VERSION", newVersionNumberString);
             projectConfig.set("CURRENT_VERSION", newVersionNumberString);
 
-            resourceLoader.saveConfig(projectConfig, pathService.getConfigPath());
-            resourceLoader.saveVersion(newVersion, pathService.getVersionsPath());
+            resourceLoader.saveConfig(projectConfig, pathService.getConfigPath(projectName));
+            resourceLoader.saveVersion(newVersion, pathService.getVersionsPath(projectName));
 
             // controller
             // projectVersions.add(newVersion);
@@ -201,29 +192,34 @@ public class CommandService implements ICommandService {
     // }
 
     @Override
-    public void rollbackVersion(Version version) { // file must be closed
-        Project currentProject = stateService.getCurrentProject();
+    public void rollbackVersion(Version version) throws Exception { // file must be closed
+        // Project currentProject = stateService.getCurrentProject();
+        Project currentProject = (Project) stateService.get("currentProject");
         Config projectConfig = currentProject.getConfig();
+        // String projectName = stateService.getProjectName();
+        String projectName = (String) stateService.get("projectName");
         // ObservableList<Version> projectVersions = currentProject.getVersions();
         String fileName = version.getFileName();
 
-        String versionFilePath = Paths.get(pathService.getVersionFilesPath(), fileName).toString();
+        String versionFilePath = Paths.get(pathService.getVersionFilesPath(projectName), fileName).toString();
 
         fileServce.decompressFile(versionFilePath, projectConfig.get("DOCUMENT_PATH"));
 
         projectConfig.set("CURRENT_VERSION", version.getVersionNumber());
 
-        resourceLoader.saveConfig(projectConfig, pathService.getConfigPath());
+        resourceLoader.saveConfig(projectConfig, pathService.getConfigPath(projectName));
     }
 
     @Override
-    public void peekVersion(Version version) {
+    public void peekVersion(Version version) throws Exception {
 
-        Project currentProject = stateService.getCurrentProject();
+        // Project currentProject = stateService.getCurrentProject();
+        Project currentProject = (Project) stateService.get("currentProject");
         Config projectConfig = currentProject.getConfig();
         String documentPath = projectConfig.get("DOCUMENT_PATH");
         String compressedFileName = version.getFileName();
-
+        // String projectName = stateService.getProjectName();
+        String projectName = (String) stateService.get("projectName");
         String parentDirname = Paths.get(documentPath).getParent().toString();
 
         // rename
@@ -234,7 +230,7 @@ public class CommandService implements ICommandService {
 
         String peekedFilePath = Paths.get(parentDirname, documentFileName + " v" + versionNumber + ".docx").toString();
 
-        String versionFilePath = Paths.get(pathService.getVersionFilesPath(), compressedFileName).toString();
+        String versionFilePath = Paths.get(pathService.getVersionFilesPath(projectName), compressedFileName).toString();
         fileServce.decompressFile(versionFilePath, peekedFilePath);
 
     }

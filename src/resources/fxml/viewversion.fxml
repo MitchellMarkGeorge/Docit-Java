@@ -26,6 +26,7 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
             <Label text="Version Number:" />
@@ -34,12 +35,13 @@
             <Label fx:id="dateLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <Label text="Comments:" GridPane.rowIndex="2" />
             <Label fx:id="commentsLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label style="-fx-font-weight: bold;" text="Make sure the file is closed." GridPane.rowIndex="3" />
          </children>
       </GridPane>
       <ButtonBar prefHeight="40.0" prefWidth="200.0">
         <buttons>
-          <Button mnemonicParsing="false" onAction="#peekVersion" text="Peek" />
-            <Button mnemonicParsing="false" onAction="#rollbackVersion" text="Rollback" />
+          <Button mnemonicParsing="false" onAction="#peekVersion" text="Peek this Version" />
+            <Button mnemonicParsing="false" onAction="#rollbackVersion" text="Rollback to this Version" />
         </buttons>
       </ButtonBar>
    </children>

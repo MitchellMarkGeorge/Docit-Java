@@ -18,20 +18,10 @@ public class Config {
         this.properties = new Properties();
     }
 
-    public Config(Properties properties) {
+    public Config(Properties properties) { 
         this.properties = properties;
     }
-    // use a map instead
-
-    /**
-     * A constructor that sets the values of the fields
-     * 
-     * @param documentPath   The path of the document that the project manages
-     * @param currentVersion The current version of the document that the user works
-     *                       on
-     * @param latestVersion  The latest version that was created
-     */
-
+    
     public void set(String key, String value) {
      
         this.properties.setProperty(key, value);

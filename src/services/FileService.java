@@ -4,15 +4,14 @@ package services;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.nio.charset.StandardCharsets;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
-
-// import java.io.FileInputStream;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
@@ -38,16 +37,18 @@ public class FileService implements IFileService {
      * 
      * @param path
      * @param callback
+     * @throws Exception
      */
     @Override
-    public void readFileLines(String path, Consumer<String> callback) {
+    public void readFileLines(String path, Consumer<String> callback) throws Exception {
         // Files.lines(path).parallel().forEachOrdered(action);
         // Should be fast and not load eveything into memory
         try (Stream<String> stream = Files.lines(Paths.get(path))) { // should i use parrallel?
             stream.forEachOrdered(callback);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            
+            throw e;
             // TODO: handle exception
             // GUI Dialog response
         }
@@ -72,32 +73,35 @@ public class FileService implements IFileService {
      * 
      * @param path
      * @param callback
+     * @throws Exception
      */
     @Override
-    public void listDirectories(String path, Consumer<Path> callback) {
+    public void listDirectories(String path, Consumer<Path> callback) throws Exception {
         if (!Files.isDirectory(Paths.get(path))) {
             // TODO: This should be handles
+            throw new Exception("Path must be a directory");
         }
         try (Stream<Path> stream = Files.list(Paths.get(path))) {
             stream.forEachOrdered(callback);
         } catch (Exception e) {
             // TODO: handle exception
-            e.printStackTrace();
+           
+            throw e;
         }
     }
 
     @Override
-    public void appendToFile(String path, String line) {
+    public void appendToFile(String path, String line) throws IOException {
         // try-resource-idiom
 
         String formattedLine = line + System.lineSeparator();
-        try {
+        // try {
             Files.write(Paths.get(path), formattedLine.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE,
                     StandardOpenOption.APPEND);
-        } catch (Exception e) {
-            // TODO: handle exception
-            e.printStackTrace();
-        }
+        // } catch (Exception e) {
+        //     // TODO: handle exception
+        //     e.printStackTrace();
+        // }
 
     }
 
@@ -134,11 +138,11 @@ public class FileService implements IFileService {
     }
 
     @Override
-    public void compressFile(String sourcePath, String targetPath) { // should throw
+    public void compressFile(String sourcePath, String targetPath) throws Exception { // should throw
         // Path source = Paths.get(sourcePath);
         // Path target = Paths.get(targetPath);
 
-        try {
+        // try {
             FileInputStream fileInputStream = new FileInputStream(sourcePath);
 
             FileOutputStream fileIoutputStream = new FileOutputStream(targetPath);
@@ -154,16 +158,13 @@ public class FileService implements IFileService {
             // close the file
             fileInputStream.close();
             deflaterOutputStream.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-            errorService.showErrorDialog("There was an error compressing the file. Make sure the document is closed.");
-        }
+        
     }
 
     @Override
-    public void decompressFile(String sourcePath, String targetPath) { // should throw
+    public void decompressFile(String sourcePath, String targetPath) throws Exception { // should throw
 
-        try {
+        // try {
             FileInputStream fileInputStream = new FileInputStream(sourcePath);
 
             FileOutputStream fileOutputStream = new FileOutputStream(targetPath);
@@ -180,18 +181,18 @@ public class FileService implements IFileService {
 
             inflaterOutputStream.close();
             fileOutputStream.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        // } catch (Exception e) {
+        //     e.printStackTrace();
 
-            errorService.showErrorDialog("There was an error decompressing the file. Make sure the document is closed.");
-        }
+        //     errorService.showErrorDialog("There was an error decompressing the file. Make sure the document is closed.");
+        // }
 
     }
 
     @Override
-    public void makeFileWithParents(String filePath)  {
+    public void makeFileWithParents(String filePath) throws IOException   {
 
-        try {
+        // try {
             File file = new File(filePath);
         // Files.createFile(path, attrs)
         if (!file.getParentFile().exists()) {
@@ -200,10 +201,10 @@ public class FileService implements IFileService {
         }
 
         file.createNewFile();
-        } catch (Exception e) {
-            e.printStackTrace();
-            //TODO: handle exception
-        }
+        // } catch (Exception e) {
+        //     e.printStackTrace();
+        //     //TODO: handle exception
+        // }
         
     }
 

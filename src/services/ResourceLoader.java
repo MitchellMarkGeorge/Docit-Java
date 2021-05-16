@@ -50,17 +50,17 @@ public class ResourceLoader implements IResourceLoader { // think of better name
      * 
      * @param string string to be parsed
      * @return a Config object with the parsed information
+     * @throws IOException
      */
     @Override
-    public Config loadConfig(String configPath) {
+    public Config loadConfig(String configPath) throws IOException {
         // the config is made with the project
         Properties properties = new Properties();
 
         try (FileInputStream fileInputStream = new FileInputStream(configPath)) {
             properties.load(fileInputStream); // should i use FileReader
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw e;
         }
         Config config = new Config(properties);
 
@@ -74,13 +74,14 @@ public class ResourceLoader implements IResourceLoader { // think of better name
 
     /**
      * Get Project object for current project
+     * @throws Exception
      */
     @Override
-    public Project loadProject(String projectName) {
-        // TODO Auto-generated method stub
-        pathService.updateProjectName(projectName);
-        String configPath = pathService.getConfigPath();
-        String versionsPath = pathService.getVersionsPath();
+    public Project loadProject(String projectName) throws Exception {
+        
+        
+        String configPath = pathService.getConfigPath(projectName);
+        String versionsPath = pathService.getVersionsPath(projectName);
         System.out.println(versionsPath);
         Config config = loadConfig(configPath);
         ObservableList<Version> versions = loadVersions(versionsPath);
@@ -89,8 +90,8 @@ public class ResourceLoader implements IResourceLoader { // think of better name
     }
 
     @Override
-    public ObservableList<Version> loadVersions(String versionsPath) {
-        // TODO Auto-generated method stub
+    public ObservableList<Version> loadVersions(String versionsPath) throws Exception {
+        
         ObservableList<Version> versions = FXCollections.observableArrayList();
         System.out.println(Files.exists(Paths.get(versionsPath)));
         if (Files.exists(Paths.get(versionsPath))) {
@@ -109,15 +110,15 @@ public class ResourceLoader implements IResourceLoader { // think of better name
     }
 
     @Override
-    public void saveVersion(Version version, String versionPath) {
-        // TODO Auto-generated method stub
+    public void saveVersion(Version version, String versionPath) throws IOException {
+        
         String versionString = version.toString();
         fileService.appendToFile(versionPath, versionString);
 
     }
 
     private Version versionFromString(String stringVersion) {
-        // versionNumber + " " + fileHash + " " + date + " " + comments;
+        
         String[] versionsObject = stringVersion.split(" ");
 
         String versionNumber = versionsObject[0].trim();
@@ -130,14 +131,13 @@ public class ResourceLoader implements IResourceLoader { // think of better name
     }
 
     @Override
-    public void saveConfig(Config config, String configPath) {
+    public void saveConfig(Config config, String configPath) throws Exception {
         Properties properties = config.getProperties();
 
         try (FileOutputStream fileOutputStream = new FileOutputStream(configPath)) {
             properties.store(fileOutputStream, null); // no comments
         } catch (Exception e) {
-            e.printStackTrace();
-            // TODO: handle exception
+            throw e;
         }
     }
 
