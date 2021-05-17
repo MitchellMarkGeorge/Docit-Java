@@ -15,8 +15,6 @@ import java.util.stream.Stream;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
-import di.Container;
-import services.interfaces.IErrorService;
 import services.interfaces.IFileService;
 
 public class FileService implements IFileService {
@@ -24,7 +22,7 @@ public class FileService implements IFileService {
     // private PathService pathService = new PathService(projectName)
 
 
-    IErrorService errorService = (IErrorService) Container.resolveDependency(IErrorService.class);
+    // IErrorService errorService = (IErrorService) Container.resolveDependency(IErrorService.class);
 
     // writing/ reading binary data should be handles differenetly
 

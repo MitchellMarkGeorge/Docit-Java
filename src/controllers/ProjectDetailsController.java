@@ -25,7 +25,7 @@ public class ProjectDetailsController extends Controller {
     @FXML
     private Label latestVersionLabel;
 
-    IStateService stateService = (IStateService) Container.resolveDependency(IStateService.class);
+    IStateService stateService = Container.resolveDependency(IStateService.class);
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {

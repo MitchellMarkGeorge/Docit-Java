@@ -36,29 +36,27 @@ public class NewProjectController extends Controller {
 
     private String documentPath;
 
-    IStateService stateService = (IStateService) Container.resolveDependency(IStateService.class); // cast it to T
-    IErrorService errorService = (IErrorService) Container.resolveDependency(IErrorService.class);
-    IPathService pathService = (IPathService) Container.resolveDependency(IPathService.class);
-    ICommandService commandService = (ICommandService) Container.resolveDependency(ICommandService.class);
+    IStateService stateService = Container.resolveDependency(IStateService.class); // cast it to T
+    IErrorService errorService = Container.resolveDependency(IErrorService.class);
+    IPathService pathService = Container.resolveDependency(IPathService.class);
+    ICommandService commandService = Container.resolveDependency(ICommandService.class);
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        
-        
+
         createProjectButton.disableProperty().bind(projectNameTextField.textProperty().isEmpty());
 
     }
 
     @Override
     public void onClosing() {
-        
+
         // resetDialog();
 
     }
 
     @Override
     public void onLoading() {
-        
 
     }
 
@@ -76,6 +74,9 @@ public class NewProjectController extends Controller {
             System.out.println(documentPath);
             selectedPathLabel.setText(documentPath);
         }
+        //  else {
+        //     errorService.
+        // }
 
     }
 
@@ -83,14 +84,22 @@ public class NewProjectController extends Controller {
     public void createProject() {
 
         try {
+
+        
+
+
             String projectName = projectNameTextField.getText(); // is required
-            if (projectName != null && !projectName.isBlank()) {
+            if (projectName != null && !projectName.isBlank() && this.documentPath != null) { // even if this is not here, it will still be caught in the Command service
                 commandService.initProject(this.documentPath, projectName);
-                
+                // ig
+                @SuppressWarnings("unchecked") // casting to this type gives a warning
+                // the state should have some kind of type safety checking
                 ObservableList<String> projectList = (ObservableList<String>) stateService.get("projectList");
                 // stateService.addProject(projectName);
 
                 projectList.add(projectName);
+
+                // ObservableList<String>
 
                 // resetDialog();
                 // Stage newProjectStage = (Stage) stateService.get("newProjectStage");
@@ -99,10 +108,13 @@ public class NewProjectController extends Controller {
 
                 stage.close();
 
+            } else {
+                errorService.showErrorDialog("No field can be empty. A document path and project name must be chosen.");
             }
         } catch (Exception e) {
             e.printStackTrace();
-            errorService.showErrorDialog("There was an error in creating the new project.");
+            errorService.showErrorDialog(
+                    "There was an error in creating the new project. There might already be a project with the same name,.");
 
         }
 
@@ -120,9 +132,9 @@ public class NewProjectController extends Controller {
     }
 
     // private void resetDialog() {
-    //     this.documentPath = null;
-    //     projectNameTextField.setText(null);
-    //     selectedPathLabel.setText("None Selected");
+    // this.documentPath = null;
+    // projectNameTextField.setText(null);
+    // selectedPathLabel.setText("None Selected");
     // }
 
 }

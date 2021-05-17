@@ -25,7 +25,7 @@ public class App extends Application {
     @Override
     public void start(Stage mainStage) throws Exception {
 
-        ContainerModule.bootstrap();
+        ContainerModule.bootstrap(null); // the root will be retrived from system. This is for testing purposes
 
         mainStage.setTitle("Docit");
         mainStage.setWidth(800);

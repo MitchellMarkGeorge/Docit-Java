@@ -54,7 +54,7 @@ public class Container {
         singletonMap.put(implementation, classInstance);
     }
 
-    public static <T> Object resolveDependency(Class<T> interfaceType) {
+    public static <T> T resolveDependency(Class<T> interfaceType) {
         if (!typeMap.containsKey(interfaceType)) {
             throw new Error("No dependency with type " + interfaceType.getSimpleName() + " exists.");
         }
@@ -67,8 +67,9 @@ public class Container {
 
         Object classInstance = singletonMap.get(classImplementation);
         
+       return interfaceType.cast(classInstance); // LOOK INTO THIS
 
-        return classInstance; // cast to T type
+        // return classInstance; // cast to T type
 
         // refactor this
         // if (classInstance == null) {

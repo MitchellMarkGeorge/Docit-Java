@@ -2,14 +2,27 @@ package services;
 
 
 
+import java.io.File;
+
 // import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import services.interfaces.IPathService;
 
 public class PathService implements IPathService { // use abstract class
-    // public String HOME_DIR = System.getProperty("user.home");
+    public String HOME_DIR;
     // public String DOCIT_PATH = Paths.get(HOME_DIR, ".docit").toString();
+
+    
+
+    public PathService(File root) {
+        if (root != null) {
+            HOME_DIR = root.getAbsolutePath();
+        } else {
+            HOME_DIR = System.getProperty("user.home");
+        }
+        
+    }
    
     @Override
     public String basename(String filePath) {
@@ -28,7 +41,7 @@ public class PathService implements IPathService { // use abstract class
 
     @Override
     public String getHomeDir() {
-        return System.getProperty("user.home");
+        return HOME_DIR;
     }
 
     @Override

@@ -27,11 +27,11 @@ import services.interfaces.IStateService;
 
 public class CommandService implements ICommandService {
 
-    IStateService stateService = (StateService) Container.resolveDependency(IStateService.class);
-    IPathService pathService = (IPathService) Container.resolveDependency(IPathService.class);
-    IResourceLoader resourceLoader = (IResourceLoader) Container.resolveDependency(IResourceLoader.class);
-    IFileService fileServce = (IFileService) Container.resolveDependency(IFileService.class);
-    IErrorService errorService = (IErrorService) Container.resolveDependency(IErrorService.class);
+    IStateService stateService = Container.resolveDependency(IStateService.class);
+    IPathService pathService = Container.resolveDependency(IPathService.class);
+    IResourceLoader resourceLoader = Container.resolveDependency(IResourceLoader.class);
+    IFileService fileServce = Container.resolveDependency(IFileService.class);
+    IErrorService errorService = Container.resolveDependency(IErrorService.class);
     // public static void main(String[] args) {
     // System.out.println(Paths.get("C://meme/me.png").getFileName().toString());
     // }
@@ -69,8 +69,15 @@ public class CommandService implements ICommandService {
 
     @Override
     public void initProject(String documentPath, String projectName) throws Exception {
-        
+        // since the document path is from a file chooder, there is no way the document does not exist
+
+        // Because of UI elements (file chooser and textfield), there is now way that the documentPath or projectName is 
         // try {
+            // This is very unlikely to happen, bit it is still worth handleing
+            // The user might select a document and then delete the document (unlikely) before creating the project
+            if (!Files.exists(Paths.get(documentPath))) {
+                throw new Exception("Document does not exist");
+            }
 
             /**
              * Here, i should make: the config file empty versions file empty version_files
@@ -83,18 +90,20 @@ public class CommandService implements ICommandService {
 
             // String newProjectPath = pathService.getProjectPath();
 
-            System.out.println(newProjectPath);
+            // System.out.println(newProjectPath);
             if (Files.exists(newProjectPath)) {
                 // throw new Error("Project " + projectName + " already exists");
-                errorService.showErrorDialog("Project " + projectName + " already exists");
-                return;
+                // errorService.showErrorDialog("Project " + projectName + " already exists");
+                // return;
+
+                throw new Exception("Project already exists");
             }
 
             Config newConfig = new Config();
             // String newConfigPath = Paths.get(newProjectPath.toString(),
             // "config").toString();
             String newConfigPath = pathService.getConfigPath(projectName);
-            System.out.println(newConfigPath);
+            // System.out.println(newConfigPath);
             newConfig.set("DOCUMENT_PATH", documentPath);
             newConfig.set("CURRENT_VERSION", "0"); // this chages based on rollbacks
             newConfig.set("LATEST_VERSION", "0"); // this follows linear history (dosent change with rollbacks)
@@ -123,10 +132,18 @@ public class CommandService implements ICommandService {
     @Override
     public Version newVersion(String comments) throws Exception { // does this throw
         
-
+        // never going to happen because of the UI, but still worth handeling
+        if (comments == null) {
+            comments = "No Comments".replaceAll(" ", "_"); // so it can be stored properly
+        }
         // try {
             // Project currentProject = stateService.getCurrentProject();
-            Project currentProject = (Project) stateService.get("currentProject");
+            Project currentProject = (Project) stateService.get("currentProject"); // can be null
+            // this will throw an exception if null
+            // if (currentProject == null) { // might not be need
+            //     throw new Exception("No current project in state.");
+            // }
+
             Config projectConfig = currentProject.getConfig();
             // String projectName = stateService.getProjectName();
             String projectName = (String) stateService.get("projectName");
@@ -196,6 +213,17 @@ public class CommandService implements ICommandService {
         // Project currentProject = stateService.getCurrentProject();
         Project currentProject = (Project) stateService.get("currentProject");
         Config projectConfig = currentProject.getConfig();
+
+        String currentVersion =  projectConfig.get("CURRENT_VERSION");
+
+        if (currentVersion.equals(version.getVersionNumber())) {
+            throw new Exception()
+        }
+
+
+
+
+
         // String projectName = stateService.getProjectName();
         String projectName = (String) stateService.get("projectName");
         // ObservableList<Version> projectVersions = currentProject.getVersions();

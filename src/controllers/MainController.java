@@ -51,11 +51,11 @@ public class MainController extends Controller { // need to fix this
     @FXML
     private Button projectDetailsButton;
 
-    IStateService stateService = (IStateService) Container.resolveDependency(IStateService.class);
-    IErrorService errorService = (IErrorService) Container.resolveDependency(IErrorService.class);
-    ICommandService commandService = (ICommandService) Container.resolveDependency(ICommandService.class);
-    IResourceLoader resouceService = (IResourceLoader) Container.resolveDependency(IResourceLoader.class);
-    IPathService pathService = (IPathService) Container.resolveDependency(IPathService.class);
+    IStateService stateService = Container.resolveDependency(IStateService.class);
+    IErrorService errorService =  Container.resolveDependency(IErrorService.class);
+    ICommandService commandService = Container.resolveDependency(ICommandService.class);
+    IResourceLoader resouceService = Container.resolveDependency(IResourceLoader.class);
+    IPathService pathService = Container.resolveDependency(IPathService.class);
 
     // Initializable
 
@@ -223,6 +223,8 @@ public class MainController extends Controller { // need to fix this
             }
         } catch (Exception e) {
             e.printStackTrace();
+
+            
 
             errorService.showErrorDialog("There was an error creating a new version of the document.");
         }

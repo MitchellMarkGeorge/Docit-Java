@@ -40,9 +40,9 @@ public class ResourceLoader implements IResourceLoader { // think of better name
     // System.out.println(stateService);
     // }
 
-    IStateService stateService = (IStateService) Container.resolveDependency(IStateService.class);
-    IFileService fileService = (IFileService) Container.resolveDependency(IFileService.class);
-    IPathService pathService = (IPathService) Container.resolveDependency(IPathService.class);
+    IStateService stateService = Container.resolveDependency(IStateService.class);
+    IFileService fileService =  Container.resolveDependency(IFileService.class);
+    IPathService pathService = Container.resolveDependency(IPathService.class);
 
     /**
      * This method parses a string appropriately and stores the parsed information
@@ -59,16 +59,15 @@ public class ResourceLoader implements IResourceLoader { // think of better name
 
         try (FileInputStream fileInputStream = new FileInputStream(configPath)) {
             properties.load(fileInputStream); // should i use FileReader
+
+            Config config = new Config(properties);
+
+            return config;
+
         } catch (IOException e) {
             throw e;
         }
-        Config config = new Config(properties);
-
-        // FileService.readFileLines(Path.of("je;"), (line) -> {
-        // line.split("=");
-        // });
-
-        return config;
+       
 
     }
 
@@ -93,7 +92,7 @@ public class ResourceLoader implements IResourceLoader { // think of better name
     public ObservableList<Version> loadVersions(String versionsPath) throws Exception {
         
         ObservableList<Version> versions = FXCollections.observableArrayList();
-        System.out.println(Files.exists(Paths.get(versionsPath)));
+        // System.out.println(Files.exists(Paths.get(versionsPath)));
         if (Files.exists(Paths.get(versionsPath))) {
             fileService.readFileLines(versionsPath, (line) -> {
                 System.out.println(line);
