@@ -217,7 +217,7 @@ public class CommandService implements ICommandService {
         String currentVersion =  projectConfig.get("CURRENT_VERSION");
 
         if (currentVersion.equals(version.getVersionNumber())) {
-            throw new Exception()
+            throw new Exception("Can't rollback to current version");
         }
 
 
