@@ -68,10 +68,15 @@ public class ResourceLoader implements IResourceLoader { // think of better name
      * Get Project object for current project
      * @throws Exception
      */
-    @Override
+    @Override // never 
     public Project loadProject(String projectName) throws Exception {
         
+        String projectPath = pathService.getProjectPath(projectName);
         
+        if (!Files.exists(Paths.get(projectPath))) { // never going to happen
+            throw new Exception("Project does not exist.");
+        }
+
         String configPath = pathService.getConfigPath(projectName);
         String versionsPath = pathService.getVersionsPath(projectName);
         System.out.println(versionsPath);
@@ -102,8 +107,10 @@ public class ResourceLoader implements IResourceLoader { // think of better name
     }
 
     @Override
-    public void saveVersion(Version version, String versionPath) throws IOException {
-        
+    public void saveVersion(Version version, String versionPath) throws Exception {
+        if (!Files.exists(Paths.get(versionPath))) { // the file is meant to be created when the project is first made
+            throw new Exception("Version path does not exist");
+        } // never going to happen
         String versionString = version.toString();
         fileService.appendToFile(versionPath, versionString);
 
@@ -123,11 +130,11 @@ public class ResourceLoader implements IResourceLoader { // think of better name
     }
 
     @Override
-    public void saveConfig(Config config, String configPath) throws Exception {
+    public void saveConfig(Config config, String configPath) throws Exception { // the file is meant to be created when the project is first made
 
         if (!Files.exists(Paths.get(configPath))) {
             throw new Exception("Config path does not exist");
-        }
+        } // never going to happen
 
         Properties properties = config.getProperties();
 

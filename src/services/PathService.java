@@ -25,16 +25,16 @@ public class PathService implements IPathService { // use abstract class
     }
    
     @Override
-    public String basename(String filePath) {
+    public String basename(String fileName) {
 
         // cna have file.service.docx
 
         // int lastDotIndex = filePath.lastIndexOf('.');
-        int lastDotIndex = filePath.indexOf('.'); // should i do this
+        int lastDotIndex = fileName.indexOf('.'); // should i do this
         if (lastDotIndex == -1) { // no dot
-            return filePath;
+            return fileName;
         } else {
-            return filePath.substring(0, lastDotIndex);
+            return fileName.substring(0, lastDotIndex);
         }
    
     }
@@ -48,7 +48,9 @@ public class PathService implements IPathService { // use abstract class
     public String getDocitPath() {
         return Paths.get(getHomeDir(), ".docit").toString();
     }
-    
+
+
+    //Because of the UI, the projectName arguments will never be blank or null
 
     @Override
     public String getVersionFilesPath(String projectName) {

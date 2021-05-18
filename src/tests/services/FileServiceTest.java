@@ -1,7 +1,7 @@
 package tests.services;
 
 import java.io.File;
-import java.io.IOException;
+
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.rules.TestRule;
+
 
 import di.Container;
 import services.interfaces.IFileService;
@@ -128,7 +128,7 @@ public class FileServiceTest extends Testable {
     }
 
     @Test
-    public void testAppendFileNoFile() {
+    public void testAppendFileNoFile() { // automatically create file
 
         IFileService fileService = Container.resolveDependency(IFileService.class);
 

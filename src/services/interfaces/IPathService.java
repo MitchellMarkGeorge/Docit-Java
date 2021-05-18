@@ -16,7 +16,7 @@ public interface IPathService {
     
     public String getDocitPath();
 
-    public String basename(String filePath);
+    public String basename(String fileName);
 
     public String getVersionFilesPath(String projectName);
 }

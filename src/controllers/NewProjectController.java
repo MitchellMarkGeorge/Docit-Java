@@ -90,6 +90,14 @@ public class NewProjectController extends Controller {
 
             String projectName = projectNameTextField.getText(); // is required
             if (projectName != null && !projectName.isBlank() && this.documentPath != null) { // even if this is not here, it will still be caught in the Command service
+                
+                String ILLEGAL_CHARACTERS = "!@#$%&*()'+,-./:;<=>?[]^_`{|}";
+
+                if (projectName.contains(ILLEGAL_CHARACTERS)) { // TEST THIS
+                     errorService.showErrorDialog("The project name cannot contain any illegal characters: " + ILLEGAL_CHARACTERS);
+                     return;
+                }
+                
                 commandService.initProject(this.documentPath, projectName);
                 // ig
                 @SuppressWarnings("unchecked") // casting to this type gives a warning
