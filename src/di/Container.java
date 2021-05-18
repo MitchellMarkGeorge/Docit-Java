@@ -46,10 +46,14 @@ public class Container {
 
     public static <T, U> void bindDependency(Class<T> interfaceType, T classInstance) {
         if (interfaceType == null || classInstance == null) {
-            throw new Error("Cannot have null arguments");
+            return;
         }
 
-        Class<?> implementation = classInstance.getClass(); // do i still need this? Yess I do
+        if (typeMap.containsKey(interfaceType)) {
+            throw new Error("Type " + interfaceType.getSimpleName() + " is already in the container");
+        }
+
+        Class<?> implementation = classInstance.getClass(); 
         typeMap.put(interfaceType, implementation);
         singletonMap.put(implementation, classInstance);
     }
@@ -57,13 +61,16 @@ public class Container {
     public static <T> T resolveDependency(Class<T> interfaceType) {
         if (!typeMap.containsKey(interfaceType)) {
             throw new Error("No dependency with type " + interfaceType.getSimpleName() + " exists.");
+            // return null;
         }
 
         Class<?> classImplementation = typeMap.get(interfaceType);
 
-        if (!singletonMap.containsKey(classImplementation)) {
-            throw new Error("No singleton that instantiates class " + classImplementation.getSimpleName() + " exists");
-        }
+        // cant happen
+        // if (!singletonMap.containsKey(classImplementation)) {
+        //     // throw new Error("No singleton that instantiates class " + classImplementation.getSimpleName() + " exists");
+        //     return null;
+        // }
 
         Object classInstance = singletonMap.get(classImplementation);
         
