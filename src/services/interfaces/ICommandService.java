@@ -18,7 +18,7 @@ public interface ICommandService {
 
     Version newVersion(String comments) throws Exception;
 
-    void peekVersion(Version version) throws Exception; // pass verion?
+    void peekVersion() throws Exception; // pass verion?
 
-    void rollbackVersion(Version version) throws Exception; // pass verion?
+    void rollbackVersion() throws Exception; // pass verion?
 }

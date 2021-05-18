@@ -85,8 +85,8 @@ public class ViewVersionController extends Controller {
 
         try {
             // Version version = stateService.getCurrentVersion();
-            Version version = (Version) stateService.get("currentVersion");
-            commandService.peekVersion(version);
+            
+            commandService.peekVersion(); // should i just access the state service in the actual method
             stage.close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -100,8 +100,8 @@ public class ViewVersionController extends Controller {
 
         try {
             // Version version = stateService.getCurrentVersion();
-            Version version = (Version) stateService.get("currentVersion");
-            commandService.rollbackVersion(version);
+            
+            commandService.rollbackVersion();
             stage.close();
         } catch (Exception e) {
             e.printStackTrace();

@@ -103,42 +103,17 @@ public class FileService implements IFileService {
 
     }
 
-    /**
-     * This should be used with version files and word documents
-     * 
-     * @param path
-     * @return
-     */
-    @Override
-    public byte[] readFiletoBuffer(String path) { // should it throw?
-        // https://docs.oracle.com/javase/9/docs/api/java/nio/file/Files.html#readAllBytes-java.nio.file.Path-
-        try {
-            // Max size of file this method can work with 2gb
-            // With just text, max word document size is 32mb,
-            // but with images and videos, it can increase to about 512mb
-            return Files.readAllBytes(Paths.get(path));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-            // TODO: handle exception
-        }
-    };
-
-    @Override
-    public void writeBuffertoFile(String path, byte[] buffer) { // might rename
-        try {
-            Files.write(Paths.get(path), buffer, StandardOpenOption.CREATE);
-        } catch (Exception e) {
-            // TODO: handle exception
-            e.printStackTrace();
-
-        }
-    }
 
     @Override
     public void compressFile(String sourcePath, String targetPath) throws Exception { // should throw
         // Path source = Paths.get(sourcePath);
         // Path target = Paths.get(targetPath);
+
+        // no case where either would be null -> if they were, the command service (where they are used)
+
+        if (!Files.exists(Paths.get(sourcePath))) { // would be handled anyway but it is better to 
+            throw new Exception("File at source path must exist");
+        }
 
         // try {
             FileInputStream fileInputStream = new FileInputStream(sourcePath);
@@ -161,6 +136,10 @@ public class FileService implements IFileService {
 
     @Override
     public void decompressFile(String sourcePath, String targetPath) throws Exception { // should throw
+
+        if (!Files.exists(Paths.get(sourcePath))) { // would be handled anyway but it is better to 
+            throw new Exception("File at source path must exist");
+        }
 
         // try {
             FileInputStream fileInputStream = new FileInputStream(sourcePath);
@@ -188,8 +167,12 @@ public class FileService implements IFileService {
     }
 
     @Override
-    public void makeFileWithParents(String filePath) throws IOException   {
+    public void makeFileWithParents(String filePath) throws Exception   {
 
+
+        if (Files.exists(Paths.get(filePath))) {
+            throw new Exception("File already exists");
+        }
         // try {
             File file = new File(filePath);
         // Files.createFile(path, attrs)

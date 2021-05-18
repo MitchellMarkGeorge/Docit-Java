@@ -1,6 +1,8 @@
 package services;
 
 
+//USE ABSTRACT CLASS FOR THIS SERVICE -> PRIVATE METHODS
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
@@ -25,7 +27,6 @@ import models.Version;
 import services.interfaces.IFileService;
 import services.interfaces.IPathService;
 import services.interfaces.IResourceLoader;
-import services.interfaces.IStateService;
 import di.Container;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -40,20 +41,12 @@ public class ResourceLoader implements IResourceLoader { // think of better name
     // System.out.println(stateService);
     // }
 
-    IStateService stateService = Container.resolveDependency(IStateService.class);
+    
     IFileService fileService =  Container.resolveDependency(IFileService.class);
     IPathService pathService = Container.resolveDependency(IPathService.class);
 
-    /**
-     * This method parses a string appropriately and stores the parsed information
-     * in a Config object
-     * 
-     * @param string string to be parsed
-     * @return a Config object with the parsed information
-     * @throws IOException
-     */
-    @Override
-    public Config loadConfig(String configPath) throws IOException {
+    
+    private Config loadConfig(String configPath) throws IOException {
         // the config is made with the project
         Properties properties = new Properties();
 
@@ -88,8 +81,8 @@ public class ResourceLoader implements IResourceLoader { // think of better name
         return new Project(config, versions);
     }
 
-    @Override
-    public ObservableList<Version> loadVersions(String versionsPath) throws Exception {
+    
+    private ObservableList<Version> loadVersions(String versionsPath) throws Exception {
         
         ObservableList<Version> versions = FXCollections.observableArrayList();
         // System.out.println(Files.exists(Paths.get(versionsPath)));
@@ -131,6 +124,11 @@ public class ResourceLoader implements IResourceLoader { // think of better name
 
     @Override
     public void saveConfig(Config config, String configPath) throws Exception {
+
+        if (!Files.exists(Paths.get(configPath))) {
+            throw new Exception("Config path does not exist");
+        }
+
         Properties properties = config.getProperties();
 
         try (FileOutputStream fileOutputStream = new FileOutputStream(configPath)) {

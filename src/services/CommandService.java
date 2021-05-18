@@ -209,14 +209,20 @@ public class CommandService implements ICommandService {
     // }
 
     @Override
-    public void rollbackVersion(Version version) throws Exception { // file must be closed
+    public void rollbackVersion() throws Exception { // file must be closed
         // Project currentProject = stateService.getCurrentProject();
+
+        //TODO: Throw custom exception here (No version selected), probably never going to happen
+        Version version = (Version) stateService.get("currentVersion");
+
+
+
         Project currentProject = (Project) stateService.get("currentProject");
         Config projectConfig = currentProject.getConfig();
 
-        String currentVersion =  projectConfig.get("CURRENT_VERSION");
+        String currentVersionNumber =  projectConfig.get("CURRENT_VERSION");
 
-        if (currentVersion.equals(version.getVersionNumber())) {
+        if (currentVersionNumber.equals(version.getVersionNumber())) {
             throw new Exception("Can't rollback to current version");
         }
 
@@ -231,7 +237,7 @@ public class CommandService implements ICommandService {
 
         String versionFilePath = Paths.get(pathService.getVersionFilesPath(projectName), fileName).toString();
 
-        fileServce.decompressFile(versionFilePath, projectConfig.get("DOCUMENT_PATH"));
+        fileServce.decompressFile(versionFilePath, projectConfig.get("DOCUMENT_PATH")); // meant to overwrite the current document
 
         projectConfig.set("CURRENT_VERSION", version.getVersionNumber());
 
@@ -239,11 +245,26 @@ public class CommandService implements ICommandService {
     }
 
     @Override
-    public void peekVersion(Version version) throws Exception {
+    public void peekVersion() throws Exception {
+
+
+        Version version = (Version) stateService.get("currentVersion");
+
+        //TODO: Throw custom exception here (No version selected), probably never going to happen
+        // Use use exception to show error meesgaes in errorService
 
         // Project currentProject = stateService.getCurrentProject();
         Project currentProject = (Project) stateService.get("currentProject");
         Config projectConfig = currentProject.getConfig();
+
+        String currentVersionNumber =  projectConfig.get("CURRENT_VERSION");
+
+        if (currentVersionNumber.equals(version.getVersionNumber())) {
+            throw new Exception("Can't rollback to current version");
+        }
+
+
+
         String documentPath = projectConfig.get("DOCUMENT_PATH");
         String compressedFileName = version.getFileName();
         // String projectName = stateService.getProjectName();
