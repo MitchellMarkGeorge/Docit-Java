@@ -1,5 +1,14 @@
+/**
+ * The controller class for the main stage of the application. T
+ * his stage has the menu, the ListView for projects, and a TableView to display the current projects versions. 
+ * It also implements various methods that are triggered by buttons and menu items.
+ * 
+ * @author Mitchell Mark-George
+ */
+
 package controllers;
 
+//Nesseccary imports
 import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
@@ -27,10 +36,9 @@ import services.interfaces.IStateService;
 
 import cache.Cache;
 
-//should show the current and latest version version SOMEHOW
+public class MainController extends Controller {
 
-public class MainController extends Controller { // need to fix this
-
+    // JavaFX emelemts loaded from the fxml file
     @FXML
     private Label projectLabel;
     @FXML
@@ -39,20 +47,18 @@ public class MainController extends Controller { // need to fix this
     private Button newVersionButton;
     @FXML
     private TableView<Version> tableView;
-
-    // @FXML private String hello;
     @FXML
     private TableColumn<Version, String> versionColumn;
     @FXML
     private TableColumn<Version, String> dateColumn;
     @FXML
     private TableColumn<Version, String> commentsColumn;
-
     @FXML
     private Button projectDetailsButton;
 
+    //Injecting the needed services from the dependency injection container
     IStateService stateService = Container.resolveDependency(IStateService.class);
-    IErrorService errorService =  Container.resolveDependency(IErrorService.class);
+    IErrorService errorService = Container.resolveDependency(IErrorService.class);
     ICommandService commandService = Container.resolveDependency(ICommandService.class);
     IResourceLoader resouceService = Container.resolveDependency(IResourceLoader.class);
     IPathService pathService = Container.resolveDependency(IPathService.class);
@@ -223,8 +229,6 @@ public class MainController extends Controller { // need to fix this
             }
         } catch (Exception e) {
             e.printStackTrace();
-
-            
 
             errorService.showErrorDialog("There was an error creating a new version of the document.");
         }
