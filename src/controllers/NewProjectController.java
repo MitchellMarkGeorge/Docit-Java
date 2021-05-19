@@ -1,5 +1,5 @@
 /**
- * The controller class for the NewProject Stage. 
+ * The controller class for the NewProject dialog Stage. 
  * This stage allows the user to create a new project using a project name and the path to the document. 
  * It implements the Controller interface and its methods.
  * 
@@ -168,7 +168,7 @@ public class NewProjectController extends Controller {
                 stage.close();
 
             } else {
-                // show trhe error dialog is any of the needed details are invalid
+                // show the error dialog is any of the needed details are invalid
                 errorService.showErrorDialog("No field can be empty. A document path and project name must be chosen.");
             }
         } catch (Exception e) {
