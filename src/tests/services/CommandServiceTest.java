@@ -43,6 +43,26 @@ public class CommandServiceTest extends Testable {
     }
 
     @Test
+    public void testGetProjectsTestEmptyDocitFolder() {
+
+        ICommandService commandService = Container.resolveDependency(ICommandService.class);
+        boolean hasError = false;
+        ObservableList<String> result = null;
+        try {
+            tempFolder.newFolder(".docit");
+            result = commandService.getProjects();
+        } catch (Exception e) {
+            e.printStackTrace();
+            hasError = true;
+        }
+
+        Assert.assertFalse(hasError);
+        Assert.assertNotNull(result);
+        Assert.assertTrue(result.isEmpty());
+
+    }
+
+    @Test
     public void testGetProjects() {
 
         IPathService pathService = Container.resolveDependency(IPathService.class);

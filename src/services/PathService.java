@@ -13,6 +13,20 @@ public class PathService implements IPathService { // use abstract class
     public String HOME_DIR;
     // public String DOCIT_PATH = Paths.get(HOME_DIR, ".docit").toString();
 
+    /**
+     * Direectory structure of Docit
+     * .docit (folder that stoes all of the projects and their accociated files [folder is stored based on provided root])
+     * |-> {projectname} (all projects have their own folders that store their accosiacted files)
+     *       |-> config (this file stores the project config information like the current and latest version pointers and the path of the projects document)
+     *       |-> versions (this file stores the list of versions of the project [the projects's "timeline"])
+     *       |-> version_files (this folder stores all the actual versions of the document)
+     */
+
+
+    /**
+     * 
+     * @param root
+     */
     
 
     public PathService(File root) {
