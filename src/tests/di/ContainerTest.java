@@ -39,6 +39,106 @@ public class ContainerTest {
     }
 
     @Test
+    public void testBindDependencyNullInterfacetype() {
+
+        boolean hasError = false;
+
+        try {
+            Container.bindDependency(null, new StateService());
+            // Container.bindDependency(IStateService.class, new StateService());
+        } catch (Error e) {
+            e.printStackTrace();
+            hasError = true;
+           
+        }
+
+        Assert.assertTrue(hasError);
+
+    }
+
+    @Test
+    public void testBindDependencyNullInstance() {
+
+        boolean hasError = false;
+
+        try {
+            Container.bindDependency(IStateService.class, null);
+            
+        } catch (Error e) {
+            e.printStackTrace();
+            hasError = true;
+           
+        }
+
+        Assert.assertTrue(hasError);
+
+    }
+
+    @Test
+    public void testBindDependencyNullBoth() {
+
+        boolean hasError = false;
+
+        try {
+            Container.bindDependency(null, null);
+            
+        } catch (Error e) {
+            e.printStackTrace();
+            hasError = true;
+           
+        }
+
+        Assert.assertTrue(hasError);
+
+    }
+
+
+
+    @Test
+    public void testResolveDependencyEmpty() {
+
+        boolean hasError = false;
+        IStateService stateService = null;
+        try {
+            // Container.bindDependency(IStateService.class, new StateService());
+            // Container.bindDependency(IStateService.class, new StateService());
+            stateService = Container.resolveDependency(IStateService.class);
+        } catch (Error e) {
+            e.printStackTrace();
+            hasError = true;
+           
+        }
+
+        Assert.assertTrue(hasError);
+        Assert.assertNull(stateService);
+
+        
+
+    }
+
+    @Test
+    public void testResolveDependencyNull() {
+
+        boolean hasError = false;
+        IStateService stateService = null;
+        try {
+            Container.bindDependency(IStateService.class, new StateService());
+            // Container.bindDependency(IStateService.class, new StateService());
+            stateService = Container.resolveDependency(null);
+        } catch (Error e) {
+            e.printStackTrace();
+            hasError = true;
+           
+        }
+
+        Assert.assertTrue(hasError);
+        Assert.assertNull(stateService);
+
+        
+
+    }
+
+    @Test
     public void testBindandResolveDependency() {
 
         boolean hasError = false;

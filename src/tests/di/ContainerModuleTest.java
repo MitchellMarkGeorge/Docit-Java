@@ -34,6 +34,6 @@ public class ContainerModuleTest extends Testable{
 
         
 
-    }
+    } // test a non existent root File object
     
 }
