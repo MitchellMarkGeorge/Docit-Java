@@ -8,7 +8,7 @@
 
 package services;
 
-import java.io.File;
+
 // Nesseccary imports
 import java.io.IOException;
 import java.nio.file.Files;
@@ -73,7 +73,7 @@ public class CommandService implements ICommandService {
                 .forEachOrdered(file -> projects.add(file.getName()));
             }
 
-            return projects; // return the lisr
+            return projects; // return the list
 
     }
 
@@ -206,78 +206,97 @@ public class CommandService implements ICommandService {
     }
   
 
+    /**
+     * This inherited method is responsible for rolling back to the currently selected version
+     * (change the state of the document to the state of the given version).
+     * This method gets the curretlu selected version, restores the state of the document at that version,
+     *  and changes the current version pointer to point at that version
+     *  precondition: there is a currently selected version and that version is not the current version of the project
+     *  postcondition: a rollback is done correctly and the accosiated files are updated
+     */
     @Override
-    public void rollbackVersion() throws Exception { // file must be closed
-        // Project currentProject = stateService.getCurrentProject();
+    public void rollbackVersion() throws Exception { 
 
-        //TODO: Throw custom exception here (No version selected), probably never going to happen
+        // gets the selected version from the state service
         Version version = (Version) stateService.get("currentVersion");
-
-
-
+        // gets the currently selected project from the state service
         Project currentProject = (Project) stateService.get("currentProject");
+        // get the config from the project object
         Config projectConfig = currentProject.getConfig();
-
+        //get the current version number
         String currentVersionNumber =  projectConfig.get("CURRENT_VERSION");
-
+        // if the version number from the version object and the current version number are the same,
+        // then throw an excetion
+        // this is because you cannot rollback to the current version -> nothing will change
+        // this is handled by the UI by disabling the butttons
         if (currentVersionNumber.equals(version.getVersionNumber())) {
             throw new Exception("Can't rollback to current version");
         }
-
-
-
-
-
-        // String projectName = stateService.getProjectName();
+        // get the project name fom the stateService
         String projectName = (String) stateService.get("projectName");
-        // ObservableList<Version> projectVersions = currentProject.getVersions();
+        // get the name of the version file of the version that will be rolled back to
         String fileName = version.getFileName();
-
+        // get the path of the version file
         String versionFilePath = Paths.get(pathService.getVersionFilesPath(projectName), fileName).toString();
-
+        // decompress the version file and witre it to the document path
+        // this essentionly resportes the state of the document at that given version
+        // the "rollback" has officially happened
         fileServce.decompressFile(versionFilePath, projectConfig.get("DOCUMENT_PATH")); // meant to overwrite the current document
-
+        // sets the current version pointer to the version that was just rolled back to
         projectConfig.set("CURRENT_VERSION", version.getVersionNumber());
-
+        // save the updated config
         resourceLoader.saveConfig(projectConfig, pathService.getConfigPath(projectName));
     }
 
+    /**
+     * This inherited methood is resposible for peeking the currently selected version 
+     * (create a new file with the state of a given version)
+     * 
+     * precondition: there is a currently selected version and that version is not the current version of the project
+     *  postcondition: a "peek" is done correctly and the accosiated files are updated (just the documnent path)
+     */
     @Override
     public void peekVersion() throws Exception {
 
-
+        // gets the selected version from the stateService
         Version version = (Version) stateService.get("currentVersion");
 
-        //TODO: Throw custom exception here (No version selected), probably never going to happen
-        // Use use exception to show error meesgaes in errorService
+   
 
-        // Project currentProject = stateService.getCurrentProject();
+        // gets the currently selected project from the state service
         Project currentProject = (Project) stateService.get("currentProject");
+        // get the config from the project object
         Config projectConfig = currentProject.getConfig();
-
+        // get the current version number from the config
         String currentVersionNumber =  projectConfig.get("CURRENT_VERSION");
-
+          // if the version number from the version object and the current version number are the same,
+        // then throw an excetion
+        // this is because you cannot peek to the current version -> you would be creating a clone of the document
+        // this is handled by the UI by disabling the butttons
         if (currentVersionNumber.equals(version.getVersionNumber())) {
             throw new Exception("Can't rollback to current version");
         }
 
-
-
+        // get the documentpath from the config
         String documentPath = projectConfig.get("DOCUMENT_PATH");
+        // get the name of he version file of that version
         String compressedFileName = version.getFileName();
-        // String projectName = stateService.getProjectName();
+        // get the project name from the stateService
         String projectName = (String) stateService.get("projectName");
+        // get the parent directory of the document (the peeked file should be written in the same directodyu as the document)
         String parentDirname = Paths.get(documentPath).getParent().toString();
 
-        // rename
+        // get the filename of rhe documentt (with extension)
         Path fileName = Paths.get(documentPath).getFileName();
+        // remove extensions (and any facy dots) from the document file name
         String documentFileName = pathService.basename(fileName.toString());
 
         String versionNumber = version.getVersionNumber();
-
+        // creates the path that the peeked path will be written to
         String peekedFilePath = Paths.get(parentDirname, documentFileName + " v" + versionNumber + ".docx").toString();
-
+        // gvets the path of the accosited version file of the given version
         String versionFilePath = Paths.get(pathService.getVersionFilesPath(projectName), compressedFileName).toString();
+        // decomreesseds the version file into the peek  file path
         fileServce.decompressFile(versionFilePath, peekedFilePath);
 
     }

@@ -126,7 +126,7 @@ public class MainController extends Controller {
 
     @Override
     public void onClosing() {
-        // TODO Auto-generated method stub
+        
 
     }
 

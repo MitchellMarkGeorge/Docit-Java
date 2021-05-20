@@ -19,7 +19,7 @@ public interface IPathService {
     public String getProjectPath(String projectName);
 
     /**
-     * This method returns the path to a project's versions file given the project name
+     * This method returns the path to a project's versions file (the file that stores the "timeline") given the project name
      * @param projectName name of the project
      * @return the path to a project's versions file
      */

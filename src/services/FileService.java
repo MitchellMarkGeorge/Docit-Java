@@ -1,6 +1,13 @@
+/**
+ * This service is responsible for handling everything related to files 
+ * (reading files, listing directories, reading files line by line, compressing and decompressing).
+ * This service implements the IFileService and all of its methods.
+ * 
+ * @author Mitchell Mark-George
+ */
+
 package services;
-
-
+// Nesseccary imports
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -19,129 +26,133 @@ import services.interfaces.IFileService;
 
 public class FileService implements IFileService {
 
-    // private PathService pathService = new PathService(projectName)
-
-
-    // IErrorService errorService = (IErrorService) Container.resolveDependency(IErrorService.class);
-
-    // writing/ reading binary data should be handles differenetly
+    
 
     // https://mkyong.com/java/java-how-to-read-a-file/
     // https://www.baeldung.com/java-try-with-resources
     // https://www.javacodegeeks.com/2015/02/java-8-pitfall-beware-files-lines.html
 
     /**
-     * Should be used for files like config file and versions files
+     * This inherited method is responsible for reading a file line by line and calling a callback on each read line
+     * This is used to read a projects versions file
+     * @param path path of the file to be read
+     * @param callback function to be executed on each file line
      * 
-     * @param path
-     * @param callback
-     * @throws Exception
+     * precondition: the file at the path must exist
+     * postconstion: teh file should beread line-by-line succsessfully
      */
     @Override
     public void readFileLines(String path, Consumer<String> callback) throws Exception {
-        // Files.lines(path).parallel().forEachOrdered(action);
-        // Should be fast and not load eveything into memory
-        try (Stream<String> stream = Files.lines(Paths.get(path))) { // should i use parrallel?
+        // reads the file in order that the lines are in (instead of them being lazy)
+        try (Stream<String> stream = Files.lines(Paths.get(path))) { 
             stream.forEachOrdered(callback);
 
         } catch (Exception e) {
-            
             throw e;
-            // TODO: handle exception
-            // GUI Dialog response
         }
 
-        // Alternative
-        // public static void main(String[] args) throws IOException {
-
-        // String fileName = "/home/mkyong/app.log";
-
-        // // defaultCharBufferSize = 8192; or 8k
-        // try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
-        // String line;
-        // while ((line = br.readLine()) != null) {
-        // System.out.println(line);
-        // }
-        // }
-
-        // }
+      
     }
 
     /**
+     * This method is responsible for reading a directory and calling a callback on each found subdirectory
+     * this is used to get the names of all the docit projects
+     * @param path path of the folder to be read
+     * @param callback function to be executed on each file line
      * 
-     * @param path
-     * @param callback
-     * @throws Exception
+     * precondition: the path is for a folder that exists
      */
     @Override
     public void listDirectories(String path, Consumer<Path> callback) throws Exception {
+        // if the given path is not a directory, throw an exception
         if (!Files.isDirectory(Paths.get(path))) {
-            // TODO: This should be handles
             throw new Exception("Path must be a directory");
         }
+        // read the directory in an orderly fashion
         try (Stream<Path> stream = Files.list(Paths.get(path))) {
             stream.forEachOrdered(callback);
         } catch (Exception e) {
-            // TODO: handle exception
-           
+                     
             throw e;
         }
     }
 
+    /**
+     * This inherited method is responsible for appending a string line to the end of the file at the given path
+     * Used to save a version to a verions file (basically the "timeline")
+     * @param path path of the file to append the string
+     * @param line the string to append at the end of the file
+     * 
+     * precondition: the provided path is for a file and it exists
+     * postconditon: the line is appended to the end of the file
+     */
     @Override
     public void appendToFile(String path, String line) throws IOException {
-        // try-resource-idiom
-
+        
+        // formats the line to have a newline character at the enf
         String formattedLine = line + System.lineSeparator();
-        // try {
+        
+            // appends the formated line to the file using an open option
             Files.write(Paths.get(path), formattedLine.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE,
                     StandardOpenOption.APPEND);
-        // } catch (Exception e) {
-        //     // TODO: handle exception
-        //     e.printStackTrace();
-        // }
-
+        
     }
 
 
+    /**
+     * This inherited method is responsible for compressing a file at the given source path and write the result at the given target path
+     * @param sourcePath the file to be compressed
+     * @param targetPath the path that the comrpessed result should be written to
+     * 
+     * preconsdition: sourcePath is a file path that exists
+     * postcondition: the file at the sourcepath is compressed at the target path
+     */
     @Override
-    public void compressFile(String sourcePath, String targetPath) throws Exception { // should throw
-        // Path source = Paths.get(sourcePath);
-        // Path target = Paths.get(targetPath);
+    public void compressFile(String sourcePath, String targetPath) throws Exception { 
+        
 
-        // no case where either would be null -> if they were, the command service (where they are used)
-
-        if (!Files.exists(Paths.get(sourcePath))) { // would be handled anyway but it is better to 
+        // no case where either would be null -> if they were, the command service (where they are used) would throw
+        // if the source path does not exist, throw an exception
+        if (!Files.exists(Paths.get(sourcePath))) { 
             throw new Exception("File at source path must exist");
         }
 
-        // try {
+            // create the needed file streams
             FileInputStream fileInputStream = new FileInputStream(sourcePath);
 
             FileOutputStream fileIoutputStream = new FileOutputStream(targetPath);
-
+            // creates a stream to "deflate" the file
             DeflaterOutputStream deflaterOutputStream = new DeflaterOutputStream(fileIoutputStream);
 
             int data;
-
+            // compress the file till the end of the file is reached
             while ((data = fileInputStream.read()) != -1) {
                 deflaterOutputStream.write(data);
             }
 
-            // close the file
+            // close the streams
             fileInputStream.close();
             deflaterOutputStream.close();
         
     }
 
+    /**
+     * This iherited method is responsible for decompressing a file at the given source path and write the result at the given target path
+     * @param sourcePath the file to be decompressed
+     * @param targetPath the path that the decomrpessed result should be written to
+     * 
+     * preconsdition: sourcePath is a file path that exists
+     * postcondition: the file at the sourcepath is decompressed to the target path
+     */
     @Override
-    public void decompressFile(String sourcePath, String targetPath) throws Exception { // should throw
+    public void decompressFile(String sourcePath, String targetPath) throws Exception { 
 
-        if (!Files.exists(Paths.get(sourcePath))) { // would be handled anyway but it is better to 
+        // if the souercepath does not exist throw an exception
+        if (!Files.exists(Paths.get(sourcePath))) { 
             throw new Exception("File at source path must exist");
         }
 
-        // try {
+            // create the needed file streams
             FileInputStream fileInputStream = new FileInputStream(sourcePath);
 
             FileOutputStream fileOutputStream = new FileOutputStream(targetPath);
@@ -149,43 +160,42 @@ public class FileService implements IFileService {
             InflaterInputStream inflaterOutputStream = new InflaterInputStream(fileInputStream);
 
             int data;
-
+            // decompress the file till the end of the file is reached
             while ((data = inflaterOutputStream.read()) != -1) {
                 fileOutputStream.write(data);
             }
 
-            // close the files
-
+            // close the streamns
             inflaterOutputStream.close();
             fileOutputStream.close();
-        // } catch (Exception e) {
-        //     e.printStackTrace();
-
-        //     errorService.showErrorDialog("There was an error decompressing the file. Make sure the document is closed.");
-        // }
-
+        
     }
 
+    /**
+     * This inherited utility method is responsible for creating an empty file with all of its parent directories (if they are not already present) 
+     * @param filePath the path to the file 
+     *     
+     * preconditon: the file path must not exist
+     * postcondition: file should be created (with all parent folders)
+     * */
     @Override
     public void makeFileWithParents(String filePath) throws Exception   {
 
-
-        if (Files.exists(Paths.get(filePath))) {
+        // if the file already exists throw an exception
+        if (Files.exists(Paths.get(filePath))) {    
             throw new Exception("File already exists");
         }
-        // try {
+        
+        // new file object
             File file = new File(filePath);
-        // Files.createFile(path, attrs)
+            // if parents dosent exist, create the parent directory(s)
         if (!file.getParentFile().exists()) {
-            // file.getParentFile().mkdirs();
+            
             Files.createDirectories( Paths.get(file.getParentFile().getAbsolutePath()));
         }
-
+        // create the empty file
         file.createNewFile();
-        // } catch (Exception e) {
-        //     e.printStackTrace();
-        //     //TODO: handle exception
-        // }
+     
         
     }
 

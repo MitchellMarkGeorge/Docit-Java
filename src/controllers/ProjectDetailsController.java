@@ -81,7 +81,7 @@ public class ProjectDetailsController extends Controller {
 
     @Override
     public void onClosing() {
-        // TODO Auto-generated method stub
+        
 
     }
 }
