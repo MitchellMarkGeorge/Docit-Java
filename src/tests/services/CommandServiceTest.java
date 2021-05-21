@@ -1,6 +1,6 @@
 /**
  * This class is responsible for tesing the CommandService class and all its methods.
- * It extends the TestableAbstract class to ihertit is default behaviour 
+ * It extends the Testable abstract class to ihertit is default behaviour 
  * 
  * @author Mitchell Mark-George
  */
