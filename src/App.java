@@ -18,9 +18,7 @@ public class App extends Application {
         launch(args);
     }
 
-    public static void configureContainer() {
-
-    }
+  
 
     @Override
     public void start(Stage mainStage) throws Exception {

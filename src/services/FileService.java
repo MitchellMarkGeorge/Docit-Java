@@ -1,7 +1,7 @@
 /**
  * This service is responsible for handling everything related to files 
  * (reading files, listing directories, reading files line by line, compressing and decompressing).
- * This service implements the IFileService and all of its methods.
+ * This service implements the IFileService interface and all of its methods.
  * 
  * @author Mitchell Mark-George
  */

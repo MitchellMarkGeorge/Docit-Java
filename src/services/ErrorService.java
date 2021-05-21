@@ -1,7 +1,7 @@
 /**
  * This service is used to show an Alert Dialog every time an error occurs in the application. 
  * A message is passed in depending on the specified error.
- * This service implements the IErrorService and all of its methods.
+ * This service implements the IErrorService interface and all of its methods.
  * 
  * @author Mitchell Mark-George
  */

@@ -3,7 +3,7 @@
  * This service is responsible for all of the actual “commands” that the Docit program would run (getting projects, creating projects, rollback, peek, new version).
  * This is inspired by the inital CLI application 
  * Each command is implemented as a separate method (as defined in the ICommandService interface).
- * This service implements the ICommandService and all of its methods.
+ * This service implements the ICommandService interface and all of its methods.
  */
 
 package services;
@@ -27,7 +27,6 @@ import models.Version;
 import services.interfaces.ICommandService;
 import services.interfaces.IErrorService;
 import services.interfaces.IFileService;
-// import services.interfaces.IHashService;
 import services.interfaces.IPathService;
 import services.interfaces.IResourceLoader;
 import services.interfaces.IStateService;

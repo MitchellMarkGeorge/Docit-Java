@@ -1,3 +1,7 @@
+/**
+ * This class is responsible for tesing the ContainerModule class and all 
+ */
+
 package tests.di;
 
 import org.junit.Assert;

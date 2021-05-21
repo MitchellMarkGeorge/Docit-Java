@@ -1,6 +1,6 @@
 /**
  * This service is responsible for getting all the necessary file paths related to the current project (like the config path and the versions path).
- * This service implements the IPathService and all of its methods.
+ * This service implements the IPathService interface and all of its methods.
  * 
  * @author Mitchell Mark-George
  */
