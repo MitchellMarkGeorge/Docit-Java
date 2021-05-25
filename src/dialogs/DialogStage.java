@@ -49,19 +49,7 @@ public class DialogStage extends Stage {
 
         // gets the controller and gives it the instace of the stage
         Controller controller = loader.getController();
-        controller.setStage(this);
-        this.setOnShowing(event -> {
-            controller.onLoading(); // can change name
-
-        });
-
-        this.setOnHiding(event -> {
-            controller.onClosing(); // can change name
-
-            
-        });
-
-        
+        controller.setStage(this);      
         // sets the scene of the stage based on the loaded root
         this.setScene(new Scene(root));
 

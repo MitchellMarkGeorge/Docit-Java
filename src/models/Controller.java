@@ -24,8 +24,6 @@ public abstract class Controller implements Initializable {
         this.stage = stage;
     }
 
-    public abstract void onLoading(); // might not be needed anymore
-    public abstract void onClosing(); // might not be needed anymore
-    
+       
 
 }

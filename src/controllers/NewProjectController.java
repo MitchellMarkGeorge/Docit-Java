@@ -78,19 +78,7 @@ public class NewProjectController extends Controller {
 
     }
 
-    @Override
-    public void onClosing() {
-
-        // resetDialog();
-
-    }
-
-    @Override
-    public void onLoading() {
-
-    }
-
-    /**
+       /**
      * This method is responsible for opening a Word Document file chooser and saving the result (displaying it on the UI)
      *  This method is triggered when the selectFileButton is pressed
      * 

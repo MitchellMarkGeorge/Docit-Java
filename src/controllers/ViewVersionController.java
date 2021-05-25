@@ -97,23 +97,7 @@ public class ViewVersionController extends Controller {
 
     }
 
-    @Override
-    public void onLoading() {
-        // Version currentVersion = stateService.getCurrentVersion();
-        // Version currentVersion = (Version) stateService.get("currentVersion");
-
-        // versionNumberLabel.setText(currentVersion.getVersionNumber());
-        // dateLabel.setText(currentVersion.getDate());
-        // commentsLabel.setText(currentVersion.getComments());
-    }
-
-    @Override
-    public void onClosing() {
-        
-
-    }
-
-    /**
+       /**
      * This method is triggered when the peekVersionButton is pressed.
      * This method is responsible for executing the peek command and then closing the dialog
      * 

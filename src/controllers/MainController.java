@@ -119,18 +119,7 @@ public class MainController extends Controller {
 
     }
 
-    @Override
-    public void onLoading() {
-
-    }
-
-    @Override
-    public void onClosing() {
-        
-
-    }
-
-    /**
+        /**
      * This method is responsible for loading the project names from the file
      * systrem. It updates the state service and the listview with the received
      * items

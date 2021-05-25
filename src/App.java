@@ -44,7 +44,7 @@ public class App extends Application {
 
         // loads the JavaFx elements from the FXML file
         FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(getClass().getResource("/resources/fxml/new.fxml"));
+        loader.setLocation(getClass().getResource("/resources/fxml/main.fxml"));
         Parent root = loader.load(); // gets the root JavaFX element of the FXML
         // sets the icon
         mainStage.getIcons().add(new Image("/resources/icons/Docit Logo.png"));

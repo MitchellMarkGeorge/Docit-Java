@@ -72,16 +72,4 @@ public class ProjectDetailsController extends Controller {
 
     }
 
-    @Override
-    public void onLoading() {
-        
-       
-
-    }
-
-    @Override
-    public void onClosing() {
-        
-
-    }
 }
